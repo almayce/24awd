@@ -14,7 +14,7 @@ import com.arellomobile.mvp.presenter.InjectPresenter
 import io.almayce.dev.app24awd.R
 import io.almayce.dev.app24awd.presenter.CostsPresenter
 import io.almayce.dev.app24awd.adapter.CostsRecyclerViewAdpater
-import io.almayce.dev.app24awd.model.*
+import io.almayce.dev.app24awd.model.cars.*
 import kotlinx.android.synthetic.main.app_bar_addcar.*
 import kotlinx.android.synthetic.main.content_costs.*
 import kotlinx.android.synthetic.main.item_costs.*
@@ -47,9 +47,30 @@ class CostsActivity : MvpAppCompatActivity(), CostsView, CostsRecyclerViewAdpate
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.action_cost -> dialogFilterCost()
+            R.id.action_mileage -> dialogFilterCostByMileage()
             else -> onBackPressed()
         }
         return true
+    }
+
+    fun dialogFilterCostByMileage() {
+        val layout = LayoutInflater.from(this).inflate(R.layout.dialog_filtercostbymileage, null)
+        val etMileage = layout.findViewById<EditText>(R.id.etMileage)
+        val builder = AlertDialog.Builder(this, R.style.AlertDialogCustom)
+        builder.setView(layout)
+
+        val alertDialog = builder.create()
+        alertDialog.setTitle("Показывать с:")
+        alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "Отмена",
+                { dialog, which -> })
+        alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "Применить",
+                { dialog, which ->
+                    adapter = pr.getFilteredByMileageCostsRecyclerViewAdapter(this, etMileage.text.toString().toInt())
+                    adapter.notifyDataSetChanged()
+                    adapter.setClickListener(this)
+                    rvCosts.adapter = adapter
+                })
+        alertDialog.show()
     }
 
     fun dialogFilterCost() {
@@ -136,12 +157,6 @@ class CostsActivity : MvpAppCompatActivity(), CostsView, CostsRecyclerViewAdpate
         alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "Добавить",
                 { dialog, which ->
 
-                    //                    val cal = Calendar.getInstance()
-//                    cal.timeZone = TimeZone.getTimeZone("UTC")
-//                    cal.set(Calendar.DAY_OF_MONTH, dpEventDate.getDayOfMonth())
-//                    cal.set(Calendar.MONTH, dpEventDate.getMonth())
-//                    cal.set(Calendar.YEAR, dpEventDate.getYear())
-
                     var limit = 0
                     var cost: CarCost
 
@@ -155,8 +170,12 @@ class CostsActivity : MvpAppCompatActivity(), CostsView, CostsRecyclerViewAdpate
                         limit = 0
                     }
 
+                    var mileage = CarList.get(SelectedCar.index).replaceMileage
+                    if (mileage <= 0)
+                        mileage = CarList.get(SelectedCar.index).createMileage
+
                     cost = CarCost(actvParam.text.toString(),
-                            CarList.get(SelectedCar.index).replaceMileage,
+                            mileage,
                             readDatePicker(dpEventDate),
                             limit,
                             etPrice.text.toString().toInt(),
@@ -185,13 +204,6 @@ class CostsActivity : MvpAppCompatActivity(), CostsView, CostsRecyclerViewAdpate
             override fun onMenuItemClick(item: MenuItem): Boolean {
                 when (item.getItemId()) {
                     R.id.menu_edit -> dialogEditCost(position)
-//                    R.id.menu_remind -> {
-//                        Notificator().setAlarm(this@CostsActivity,
-//                                pr.getParamList().get(position).param.replaceDate - 1,
-//                                CarList.get(SelectedCar.index).model,
-//                                "Требуется замена ${pr.getParamList().get(position).param.title}")
-//                        showToast("Напоминание учтено.")
-//                    }
                     R.id.menu_remove -> dialogRemoveCost(position)
                     else -> return false
                 }
@@ -208,21 +220,11 @@ class CostsActivity : MvpAppCompatActivity(), CostsView, CostsRecyclerViewAdpate
         val tvTitle = layout.findViewById<TextView>(R.id.tvTitle)
         val etPrice = layout.findViewById<EditText>(R.id.etPrice)
         val etComment = layout.findViewById<EditText>(R.id.etComment)
-//        val dpEventDate = layout.findViewById<DatePicker>(R.id.dpEventDate)
-
         val currentCost = pr.getCost(position)
 
         tvTitle.setText(currentCost.title)
         etPrice.setText(currentCost.price.toString())
         etComment.setText(currentCost.comment)
-
-//        val cal = Calendar.getInstance()
-//        cal.timeZone = TimeZone.getTimeZone("UTC")
-//        cal.timeInMillis = currentCost.date
-//
-//        dpEventDate.updateDate(cal.get(Calendar.YEAR),
-//                cal.get(Calendar.MONTH),
-//                cal.get(Calendar.DAY_OF_MONTH))
 
         val builder = AlertDialog.Builder(this@CostsActivity, R.style.AlertDialogCustom)
         builder.setView(layout)
@@ -234,15 +236,8 @@ class CostsActivity : MvpAppCompatActivity(), CostsView, CostsRecyclerViewAdpate
         alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "Сохранить",
                 { dialog, which ->
 
-                    //                    val cal = Calendar.getInstance()
-//                    cal.timeZone = TimeZone.getTimeZone("UTC")
-//                    cal.set(Calendar.DAY_OF_MONTH, dpEventDate.getDayOfMonth())
-//                    cal.set(Calendar.MONTH, dpEventDate.getMonth())
-//                    cal.set(Calendar.YEAR, dpEventDate.getYear())
-
                     currentCost.price = etPrice.text.toString().toInt()
                     currentCost.comment = tvComment.text.toString()
-//                    currentCost.date = readDatePicker(dpEventDate)
 
                     pr.updateCost(position, currentCost)
                     adapter.notifyDataSetChanged()

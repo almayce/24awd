@@ -5,7 +5,14 @@
         android:id="@+id/action_cost"
         android:orderInCategory="100"
         android:icon="@drawable/ic_assessment_white_24dp"
-        android:title="@string/action_cars"
+        android:title="Filter"
+        app:showAsAction="always"
+        />
+    <item
+        android:id="@+id/action_mileage"
+        android:orderInCategory="50"
+        android:icon="@drawable/ic_linear_scale_white_24dp"
+        android:title="Filter"
         app:showAsAction="always"
         />
 </menu>

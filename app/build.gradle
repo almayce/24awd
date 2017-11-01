@@ -27,7 +27,7 @@ dependencies {
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-
+    compile 'com.google.code.gson:gson:2.7'
     compile 'com.android.support:leanback-v17:26.+'
     compile 'com.android.support:appcompat-v7:26.+'
     compile 'com.android.support:design:26.+'
@@ -46,5 +46,8 @@ dependencies {
 
     compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
     compile "org.jetbrains.anko:anko-coroutines:+"
+
+    compile 'com.google.android.gms:play-services-maps:11+'
+    compile 'com.akexorcist:googledirectionlibrary:1.0.5'
 
 }

@@ -3,7 +3,6 @@ package io.almayce.dev.app24awd.view
 import com.arellomobile.mvp.MvpView
 import com.arellomobile.mvp.viewstate.strategy.AddToEndSingleStrategy
 import com.arellomobile.mvp.viewstate.strategy.StateStrategyType
-import io.almayce.dev.app24awd.model.CostsCarTabParam
 
 /**
  * Created by almayce on 26.09.17.

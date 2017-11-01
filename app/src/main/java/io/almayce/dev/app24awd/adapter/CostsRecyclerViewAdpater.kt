@@ -7,10 +7,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import io.almayce.dev.app24awd.R
-import io.almayce.dev.app24awd.model.*
+import io.almayce.dev.app24awd.model.cars.CarCost
 import java.text.SimpleDateFormat
 import java.util.*
-import java.util.concurrent.TimeUnit
 
 /**
  * Created by almayce on 22.09.17.

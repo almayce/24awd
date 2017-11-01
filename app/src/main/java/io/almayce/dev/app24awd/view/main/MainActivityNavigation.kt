@@ -1,13 +1,9 @@
 package io.almayce.dev.app24awd.view.main
 
-import android.content.Context
-import android.content.Intent
-import android.net.Uri
 import android.support.design.widget.NavigationView
 import android.support.v4.view.GravityCompat
-import android.view.MenuItem
 import io.almayce.dev.app24awd.R
-import io.almayce.dev.app24awd.model.CarList
+import io.almayce.dev.app24awd.model.cars.CarList
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.delay
@@ -23,7 +19,15 @@ class MainActivityNavigation(val activity: MainActivity) {
 
         when (id) {
             R.id.nav_costs -> onNavCostsClick()
-//            R.id.nav_history -> onNavHistoryClick()
+            R.id.nav_buy -> onNavBuyClick()
+            R.id.nav_location -> {
+                if (activity.verificator.verifyLocationPermissions())
+                    activity.starter.startLocationActivity()
+            }
+            R.id.nav_instruction -> activity.starter.startDtpActivity()
+            R.id.nav_sos -> activity.sos.shareLocation()
+            R.id.nav_coordinates -> activity.starter.startCoordinatesActivity()
+            R.id.nav_doc -> activity.starter.startDocsActivity()
 //            R.id.nav_site -> activity.starter.goTo("http://24awd.com/")
             else -> activity.showToast("В стадии разработки.")
         }
@@ -43,10 +47,11 @@ class MainActivityNavigation(val activity: MainActivity) {
         }
     }
 
-    private fun onNavHistoryClick() {
-        val pref = activity.getSharedPreferences("history", Context.MODE_PRIVATE)
-        if (pref.getString("history", "") != "")
-            activity.starter.startHistoryActivity()
-        else activity.showToast("Нет истории обслуживания.")
+    private fun onNavBuyClick() {
+        if (CarList.isNotEmpty()) activity.starter.startOrderActivity()
+        else {
+            activity.showToast("Выберите автомобиль.")
+            activity.control.showCarsDialog()
+        }
     }
 }

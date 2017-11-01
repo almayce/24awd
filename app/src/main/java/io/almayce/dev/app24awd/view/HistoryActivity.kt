@@ -6,8 +6,8 @@ import android.support.v7.widget.LinearLayoutManager
 import com.arellomobile.mvp.MvpAppCompatActivity
 import io.almayce.dev.app24awd.R
 import io.almayce.dev.app24awd.adapter.HistoryRecyclerViewAdpater
-import io.almayce.dev.app24awd.model.CarList
-import io.almayce.dev.app24awd.model.SelectedCar
+import io.almayce.dev.app24awd.model.cars.CarList
+import io.almayce.dev.app24awd.model.cars.SelectedCar
 import kotlinx.android.synthetic.main.app_bar_addcar.*
 import kotlinx.android.synthetic.main.content_history.*
 

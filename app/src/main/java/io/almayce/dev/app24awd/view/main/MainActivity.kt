@@ -2,6 +2,7 @@ package io.almayce.dev.app24awd.view.main
 
 import android.content.Intent
 import android.os.Bundle
+import android.support.v4.app.ActivityCompat
 import android.support.v4.view.GravityCompat
 import android.support.v7.app.ActionBarDrawerToggle
 import android.view.Menu
@@ -14,8 +15,8 @@ import io.almayce.dev.app24awd.R
 import io.almayce.dev.app24awd.adapter.CarRecyclerViewAdpater
 import io.almayce.dev.app24awd.adapter.TabGridViewAdapter
 import io.almayce.dev.app24awd.global.Reminder
-import io.almayce.dev.app24awd.model.CarList
-import io.almayce.dev.app24awd.model.SelectedCar
+import io.almayce.dev.app24awd.model.cars.CarList
+import io.almayce.dev.app24awd.model.cars.SelectedCar
 import io.almayce.dev.app24awd.presenter.MainPresenter
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
@@ -23,7 +24,9 @@ import kotlinx.android.synthetic.main.content_main.*
 
 open class MainActivity : MvpAppCompatActivity(), MainView,
         CarRecyclerViewAdpater.ItemClickListener,
-        CarRecyclerViewAdpater.ItemLongClickListener {
+        CarRecyclerViewAdpater.ItemLongClickListener,
+ActivityCompat.OnRequestPermissionsResultCallback
+        {
 
 
     @InjectPresenter
@@ -32,8 +35,9 @@ open class MainActivity : MvpAppCompatActivity(), MainView,
     lateinit var control: MainActivityControl
     lateinit var tabControl: MainActivityTabControl
     lateinit var carControl: MainActivityCarControl
+    lateinit var sos: MainActivitySOS
     lateinit var starter: Starter
-    lateinit var verificator: Verificator
+    lateinit var verificator: MainVerificator
     lateinit var adapter: CarRecyclerViewAdpater
 
     override fun onResume() {
@@ -49,11 +53,17 @@ open class MainActivity : MvpAppCompatActivity(), MainView,
         initAdapter()
         initControls()
         initClickListeners()
-        if (verificator.verifyStoragePermissions())
-            CarList.clear()
-        pr.deserialize()
+        verificator.verifyStoragePermissions()
+        pr.onCreate()
         if (CarList.isNotEmpty())
             carControl.mileageCarDialog(SelectedCar.index)
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        when (requestCode) {
+            1 -> if (verificator.verifyStoragePermissions())control.showWelcomeDialog()
+            2 -> if (verificator.hasLocationPermission()) starter.startLocationActivity()
+        }
     }
 
     override fun updateTitle() {
@@ -83,7 +93,8 @@ open class MainActivity : MvpAppCompatActivity(), MainView,
         tabControl = MainActivityTabControl(this)
         carControl = MainActivityCarControl(this)
         starter = Starter(this)
-        verificator = Verificator(this)
+        verificator = MainVerificator(this)
+        sos = MainActivitySOS(this)
     }
 
     private fun initClickListeners() {
@@ -113,19 +124,17 @@ open class MainActivity : MvpAppCompatActivity(), MainView,
     override fun selectCar(position: Int) {
         try {
             checkCars()
-            carControl.mileageCarDialog(position)}
-        catch (e: IndexOutOfBoundsException) {
+            carControl.mileageCarDialog(position)
+        } catch (e: IndexOutOfBoundsException) {
             supportActionBar?.title = "24awd"
         }
-        control.cancelDialog()
     }
 
     private fun checkCars() {
         if (CarList.isNotEmpty()) {
             gvMain.adapter = pr.getTabGridViewAdapter(this, SelectedCar.index)
             updateTitle()
-            control.cancelDialog()
-        } else control.showWelcomeDialog()
+        }
     }
 
     override fun onBackPressed() {
@@ -146,12 +155,18 @@ open class MainActivity : MvpAppCompatActivity(), MainView,
 
     fun onMainContentClick(view: View) {
         when (view.id) {
-            R.id.btCosts -> starter.startCostsActivity()
-            R.id.rlCoordinates -> showToast("В стадии разработки.")
-            R.id.rlCrash -> showToast("В стадии разработки.")
-            R.id.rlBuy -> showToast("В стадии разработки.")
+            R.id.btCosts -> if (CarList.isNotEmpty()) starter.startCostsActivity() else showToast("Добавьте автомобиль.")
+            R.id.rlLocation -> {
+                if (verificator.verifyLocationPermissions())
+                    starter.startLocationActivity()
+            }
+            R.id.rlCoordinates ->  starter.startCoordinatesActivity()
+            R.id.btCrash -> starter.startDtpActivity()
             R.id.tvSite -> starter.goTo("http://24awd.com/")
-            else -> showToast("В стадии разработки.")
+            R.id.tvService -> if (CarList.isNotEmpty()) starter.startOrderActivity() else showToast("Добавьте автомобиль.")
+            R.id.tvParts -> if (CarList.isNotEmpty()) starter.startOrderActivity() else showToast("Добавьте автомобиль.")
+            R.id.rlSOS -> sos.shareLocation()
+            R.id.btDocuments -> starter.startDocsActivity()
         }
     }
 
@@ -162,8 +177,8 @@ open class MainActivity : MvpAppCompatActivity(), MainView,
         val adapter = gvMain.adapter as TabGridViewAdapter
         adapter.notifyDataSetChanged()
         try {
-            checkCars() }
-        catch (e: IndexOutOfBoundsException) {
+            checkCars()
+        } catch (e: IndexOutOfBoundsException) {
             e.printStackTrace()
             control.showCarsDialog()
 

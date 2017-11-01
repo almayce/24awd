@@ -1,18 +1,21 @@
 package io.almayce.dev.app24awd.adapter
 
 import android.content.Context
+import android.net.Uri
 import android.support.v4.content.ContextCompat
 import android.support.v7.widget.RecyclerView
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import io.almayce.dev.app24awd.R
-import io.almayce.dev.app24awd.model.CarList
-import io.almayce.dev.app24awd.model.CarTabParam
-import io.almayce.dev.app24awd.model.SelectedCar
+import io.almayce.dev.app24awd.model.cars.CarList
+import io.almayce.dev.app24awd.model.cars.CarTabParam
+import io.almayce.dev.app24awd.model.cars.SelectedCar
+import java.io.FileNotFoundException
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -40,10 +43,16 @@ class ParamRecyclerViewAdpater(val context: Context, var list: ArrayList<CarTabP
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val target = list.get(position)
         holder.tvTitle.text = target.title
-
         holder.tvLimit.text = "${target.replaceLimit} км."
         holder.tvCost.text = "${target.replaceCost} руб."
 
+        if (target.photoPath != "") {
+            try {
+                holder.ivPhoto.setImageURI(Uri.parse(target.photoPath))
+            } catch (e: FileNotFoundException) {
+                e.stackTrace
+            }
+        }
 
 
 //        Log.d("firstReplaceDate", target.firstReplaceDate.toString())
@@ -85,18 +94,23 @@ class ParamRecyclerViewAdpater(val context: Context, var list: ArrayList<CarTabP
             val replaceDate = System.currentTimeMillis() + TimeUnit.MILLISECONDS.convert(daysLeft, TimeUnit.DAYS)
             val nextReplaceDate = dateFormat(replaceDate)
 
+
+            holder.llNextReplace.setBackgroundColor(ContextCompat.getColor(context, R.color.colorAccentTrans))
+            holder.tvNextReplace.text = "Замена через:"
+            holder.tvReplaceDays.text =
+                    "${replaceMileage} км.\n" +
+                            "${daysLeft} дн.\n" +
+                            "(${nextReplaceDate})"
+
             if (Math.abs(System.currentTimeMillis() - replaceDate) < TimeUnit.MILLISECONDS.convert(1, TimeUnit.DAYS)
-                    || daysLeft <= 0 || replaceMileage < 0) {
+                    || daysLeft <= 0) {
+                holder.tvReplaceDays.text =
+                        "${replaceMileage} км."}
+
+            if (replaceMileage < 500){
                 holder.llNextReplace.setBackgroundColor(ContextCompat.getColor(context, R.color.colorAccentSecondTrans))
                 holder.tvNextReplace.text = "Произведите замену"
                 holder.tvReplaceDays.text = "!!!"
-            } else {
-                holder.llNextReplace.setBackgroundColor(ContextCompat.getColor(context, R.color.colorAccentTrans))
-                holder.tvNextReplace.text = "Замена через:"
-                holder.tvReplaceDays.text =
-                        "${replaceMileage} км.\n" +
-                                "${daysLeft} дн.\n" +
-                                "(${nextReplaceDate})"
             }
         }
     }
@@ -132,6 +146,7 @@ class ParamRecyclerViewAdpater(val context: Context, var list: ArrayList<CarTabP
     // stores and recycles views as they are scrolled off screen
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), View.OnClickListener, View.OnLongClickListener {
         var tvTitle: TextView
+        var ivPhoto: ImageView
         var tvReplace: TextView
         var tvNextReplace: TextView
         var llNextReplace: LinearLayout
@@ -142,6 +157,7 @@ class ParamRecyclerViewAdpater(val context: Context, var list: ArrayList<CarTabP
 
         init {
             tvTitle = itemView.findViewById<TextView>(R.id.tvTitle)
+            ivPhoto = itemView.findViewById<ImageView>(R.id.ivPhoto)
             tvReplace = itemView.findViewById<TextView>(R.id.tvReplace)
             tvNextReplace = itemView.findViewById<TextView>(R.id.tvNextReplace)
             llNextReplace = itemView.findViewById<LinearLayout>(R.id.llNextReplace)

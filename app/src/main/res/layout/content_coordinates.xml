@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context="io.almayce.dev.app24awd.view.CoordinatesActivity"
+    tools:showIn="@layout/activity_coordinates">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <LinearLayout
+            android:padding="@dimen/space"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <EditText
+                android:id="@+id/etMessage"
+                android:inputType="textMultiLine"
+                android:hint="Сообщение"
+                android:layout_width="match_parent"
+                android:layout_height="100dp" />
+
+            <Button
+                android:id="@+id/btAddPhoto"
+                android:text="Добавить фото"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+        </LinearLayout>
+    </ScrollView>
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fabConfirm"
+        android:visibility="visible"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_margin="@dimen/activity_vertical_margin"
+        android:src="@drawable/ic_check_white_24dp" />
+
+</RelativeLayout>

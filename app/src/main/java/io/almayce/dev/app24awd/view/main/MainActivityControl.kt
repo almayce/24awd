@@ -6,7 +6,6 @@ import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import io.almayce.dev.app24awd.R
 import io.almayce.dev.app24awd.adapter.CarRecyclerViewAdpater
-import io.almayce.dev.app24awd.model.CarList
 import io.almayce.dev.app24awd.view.AddcarActivity
 
 /**
@@ -40,9 +39,5 @@ class MainActivityControl(val activity: MainActivity, val adapter: CarRecyclerVi
         carsAlertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "Добавить",
                 { dialog, which -> activity.startActivity(Intent(activity, AddcarActivity::class.java)) })
         carsAlertDialog.show()
-    }
-
-    fun cancelDialog() {
-        carsAlertDialog.cancel()
     }
 }

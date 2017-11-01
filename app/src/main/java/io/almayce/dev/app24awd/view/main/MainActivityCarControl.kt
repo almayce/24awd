@@ -7,7 +7,7 @@ import android.view.View
 import android.widget.EditText
 import android.widget.PopupMenu
 import io.almayce.dev.app24awd.R
-import io.almayce.dev.app24awd.model.CarList
+import io.almayce.dev.app24awd.model.cars.CarList
 
 /**
  * Created by almayce on 27.09.17.

@@ -7,7 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import io.almayce.dev.app24awd.R
-import io.almayce.dev.app24awd.model.Car
+import io.almayce.dev.app24awd.model.cars.Car
 
 /**
  * Created by almayce on 22.09.17.

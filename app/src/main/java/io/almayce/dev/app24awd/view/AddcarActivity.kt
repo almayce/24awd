@@ -1,17 +1,14 @@
 package io.almayce.dev.app24awd.view
 
-import android.content.Context
-import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.widget.Toast
 import io.almayce.dev.app24awd.R
 import io.almayce.dev.app24awd.global.Serializer
-import io.almayce.dev.app24awd.model.Car
-import io.almayce.dev.app24awd.model.CarList
-import io.almayce.dev.app24awd.model.CarTabPack
-import io.almayce.dev.app24awd.model.SelectedCar
-import io.almayce.dev.app24awd.view.main.MainActivity
+import io.almayce.dev.app24awd.model.cars.Car
+import io.almayce.dev.app24awd.model.cars.CarList
+import io.almayce.dev.app24awd.model.cars.CarTabPack
+import io.almayce.dev.app24awd.model.cars.SelectedCar
 import kotlinx.android.synthetic.main.app_bar_addcar.*
 import kotlinx.android.synthetic.main.content_addcar.*
 
@@ -45,7 +42,7 @@ class AddcarActivity : AppCompatActivity() {
                         CarTabPack.getAllTabs(),
                         arrayListOf()
                 ))
-                Serializer.serialize()
+                Serializer.serialize(Serializer.FileName.CARS)
                 onBackPressed()
                 showToast("Автомобиль создан.")
                 SelectedCar.index = CarList.size - 1

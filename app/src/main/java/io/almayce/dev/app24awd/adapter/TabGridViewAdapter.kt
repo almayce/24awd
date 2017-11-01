@@ -8,7 +8,7 @@ import android.widget.BaseAdapter
 import android.widget.ImageView
 import android.widget.TextView
 import io.almayce.dev.app24awd.R
-import io.almayce.dev.app24awd.model.CarTab
+import io.almayce.dev.app24awd.model.cars.CarTab
 
 /**
  * Created by almayce on 21.09.17.

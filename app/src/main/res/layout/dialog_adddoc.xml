@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <android.support.design.widget.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+        android:layout_marginRight="@dimen/activity_horizontal_margin"
+        android:theme="@style/TextLabel">
+
+        <android.support.design.widget.TextInputEditText
+            android:id="@+id/etTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Название"
+            android:imeOptions="actionDone"
+            android:inputType="text"
+            android:maxLines="1"
+            android:textSize="@dimen/text_medium" />
+    </android.support.design.widget.TextInputLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/activity_vertical_margin"
+        android:background="@color/colorPrimary"
+        android:text="До:"
+        android:textAlignment="center"
+        android:textColor="@android:color/white"
+        android:textSize="@dimen/text_medium" />
+
+    <DatePicker
+        android:id="@+id/dpReplace"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:calendarViewShown="false"
+        android:datePickerMode="spinner" />
+</LinearLayout>

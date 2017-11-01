@@ -6,6 +6,7 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.os.PowerManager
 import android.support.v4.app.NotificationCompat
 import android.support.v4.content.ContextCompat
@@ -24,12 +25,12 @@ class Notificator : WakefulBroadcastReceiver() {
         val wl = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "")
 
         wl.acquire()
-
-        //        Intent resultIntent = new Intent(context, MainActivity.class);
+        val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse("http://24awd.com/"))
+        browserIntent.addFlags(Intent.FLAG_ACTIVITY_PREVIOUS_IS_TOP)
 
         intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
         val pendingIntent = PendingIntent.getActivity(context, 333,
-                intent, PendingIntent.FLAG_UPDATE_CURRENT)
+                browserIntent, PendingIntent.FLAG_UPDATE_CURRENT)
 
         val builder = NotificationCompat.Builder(context)
         if (intent.getBooleanExtra("isTask", false) == false) {
