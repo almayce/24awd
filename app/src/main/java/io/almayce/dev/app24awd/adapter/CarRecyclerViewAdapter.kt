@@ -5,22 +5,22 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
+import io.almayce.dev.app24awd.Bool
 import io.almayce.dev.app24awd.R
+import io.almayce.dev.app24awd.Str
+import io.almayce.dev.app24awd.TV
 import io.almayce.dev.app24awd.model.cars.Car
 
 /**
  * Created by almayce on 22.09.17.
  */
-class CarRecyclerViewAdpater(val context: Context, var list: ArrayList<Car>) : RecyclerView.Adapter<CarRecyclerViewAdpater.ViewHolder>() {
+class CarRecyclerViewAdapter(val context: Context,
+                             var list: ArrayList<Car>)
+    : RecyclerView.Adapter<CarRecyclerViewAdapter.ViewHolder>() {
 
-    private val inflater: LayoutInflater
+    private val inflater: LayoutInflater = LayoutInflater.from(context)
     private var clickListener: ItemClickListener? = null
     private var longClickListener: ItemLongClickListener? = null
-
-    init {
-        this.inflater = LayoutInflater.from(context)
-    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = inflater.inflate(R.layout.item_car, parent, false)
@@ -29,7 +29,7 @@ class CarRecyclerViewAdpater(val context: Context, var list: ArrayList<Car>) : R
 
     // binds the data to the textview in each row
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val target = list.get(position)
+        val target = list[position]
         holder.tvTitle.text = target.model
     }
 
@@ -41,10 +41,9 @@ class CarRecyclerViewAdpater(val context: Context, var list: ArrayList<Car>) : R
 
     // stores and recycles views as they are scrolled off screen
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), View.OnClickListener, View.OnLongClickListener {
-        var tvTitle: TextView
+        var tvTitle: TV = itemView.findViewById(R.id.tvTitle)
 
         init {
-            tvTitle = itemView.findViewById<TextView>(R.id.tvTitle)
             itemView.setOnClickListener(this)
             itemView.setOnLongClickListener(this)
         }
@@ -53,7 +52,7 @@ class CarRecyclerViewAdpater(val context: Context, var list: ArrayList<Car>) : R
             if (clickListener != null) clickListener!!.onItemClick(view, adapterPosition)
         }
 
-        override fun onLongClick(view: View): Boolean {
+        override fun onLongClick(view: View): Bool {
             view.contentDescription = tvTitle.text.toString()
             if (longClickListener != null) longClickListener!!.onItemLongClick(view, adapterPosition)
             return true
@@ -61,7 +60,7 @@ class CarRecyclerViewAdpater(val context: Context, var list: ArrayList<Car>) : R
     }
 
     // convenience method for getting data at click position
-    fun getItem(id: Int): String? = null
+    fun getItem(id: Int): Str? = null
 
     // allows clicks events to be caught
     fun setClickListener(itemClickListener: ItemClickListener) {

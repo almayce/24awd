@@ -5,22 +5,19 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
+import io.almayce.dev.app24awd.Bool
 import io.almayce.dev.app24awd.R
+import io.almayce.dev.app24awd.Str
+import io.almayce.dev.app24awd.TV
 
 /**
  * Created by almayce on 22.09.17.
  */
 class HistoryRecyclerViewAdpater(val context: Context, var list: Array<String>) : RecyclerView.Adapter<HistoryRecyclerViewAdpater.ViewHolder>() {
 
-    private val inflater: LayoutInflater
+    private val inflater = LayoutInflater.from(context)
     private var clickListener: ItemClickListener? = null
     private var longClickListener: ItemLongClickListener? = null
-
-
-    init {
-        this.inflater = LayoutInflater.from(context)
-    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = inflater.inflate(R.layout.item_history, parent, false)
@@ -29,7 +26,7 @@ class HistoryRecyclerViewAdpater(val context: Context, var list: Array<String>) 
 
     // binds the data to the textview in each row
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val target = list.get(position)
+        val target = list[position]
         holder.tvTitle.text = target.trim()
     }
 
@@ -41,10 +38,9 @@ class HistoryRecyclerViewAdpater(val context: Context, var list: Array<String>) 
 
     // stores and recycles views as they are scrolled off screen
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), View.OnClickListener, View.OnLongClickListener {
-        var tvTitle: TextView
+        val tvTitle: TV by lazy { itemView.findViewById<TV>(R.id.tvTitle) }
 
         init {
-            tvTitle = itemView.findViewById<TextView>(R.id.tvTitle)
             itemView.setOnClickListener(this)
             itemView.setOnLongClickListener(this)
         }
@@ -53,7 +49,7 @@ class HistoryRecyclerViewAdpater(val context: Context, var list: Array<String>) 
             if (clickListener != null) clickListener!!.onItemClick(view, adapterPosition)
         }
 
-        override fun onLongClick(view: View): Boolean {
+        override fun onLongClick(view: View): Bool {
             view.contentDescription = tvTitle.text.toString()
             if (longClickListener != null) longClickListener!!.onItemLongClick(view, adapterPosition)
             return true
@@ -61,7 +57,7 @@ class HistoryRecyclerViewAdpater(val context: Context, var list: Array<String>) 
     }
 
     // convenience method for getting data at click position
-    fun getItem(id: Int): String? = null
+    fun getItem(id: Int): Str? = null
 
     // allows clicks events to be caught
     fun setClickListener(itemClickListener: ItemClickListener) {

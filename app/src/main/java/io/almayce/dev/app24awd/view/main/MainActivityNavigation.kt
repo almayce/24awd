@@ -17,19 +17,21 @@ class MainActivityNavigation(val activity: MainActivity) {
     val navigationListener = NavigationView.OnNavigationItemSelectedListener { item ->
         val id = item.itemId
 
-        when (id) {
-            R.id.nav_costs -> onNavCostsClick()
-            R.id.nav_buy -> onNavBuyClick()
-            R.id.nav_location -> {
-                if (activity.verificator.verifyLocationPermissions())
-                    activity.starter.startLocationActivity()
-            }
-            R.id.nav_instruction -> activity.starter.startDtpActivity()
-            R.id.nav_sos -> activity.sos.shareLocation()
-            R.id.nav_coordinates -> activity.starter.startCoordinatesActivity()
-            R.id.nav_doc -> activity.starter.startDocsActivity()
+        with(activity) {
+            when (id) {
+                R.id.nav_costs -> onNavCostsClick()
+                R.id.nav_buy -> onNavBuyClick()
+                R.id.nav_location -> {
+                    if (verificator.verifyLocationPermissions())
+                        starter.startLocationActivity()
+                }
+                R.id.nav_instruction -> starter.startDtpActivity()
+                R.id.nav_sos -> sos.shareLocation()
+                R.id.nav_coordinates -> starter.startCoordinatesActivity()
+                R.id.nav_doc -> starter.startDocsActivity()
 //            R.id.nav_site -> activity.starter.goTo("http://24awd.com/")
-            else -> activity.showToast("В стадии разработки.")
+                else -> showToast("В стадии разработки.")
+            }
         }
 
         launch(UI) {
@@ -39,19 +41,20 @@ class MainActivityNavigation(val activity: MainActivity) {
         true
     }
 
-    private fun onNavCostsClick() {
-        if (CarList.isNotEmpty()) activity.starter.startCostsActivity()
-        else {
-            activity.showToast("Выберите автомобиль.")
-            activity.control.showCarsDialog()
+    private fun onNavCostsClick() = if (CarList.isNotEmpty()) activity.starter.startCostsActivity()
+    else {
+        with(activity) {
+            showToast("Выберите автомобиль.")
+            control.showCarsDialog()
         }
     }
 
-    private fun onNavBuyClick() {
-        if (CarList.isNotEmpty()) activity.starter.startOrderActivity()
-        else {
-            activity.showToast("Выберите автомобиль.")
-            activity.control.showCarsDialog()
-        }
-    }
+    private fun onNavBuyClick() =
+            if (CarList.isNotEmpty()) activity.starter.startOrderActivity()
+            else {
+                with(activity) {
+                    showToast("Выберите автомобиль.")
+                    control.showCarsDialog()
+                }
+            }
 }

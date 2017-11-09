@@ -1,12 +1,13 @@
 package io.almayce.dev.app24awd.model.cars
 
+import io.almayce.dev.app24awd.Str
 import java.io.Serializable
 
 /**
  * Created by almayce on 22.09.17.
  */
-data class Car(var model: String,
-               var vin: String,
+data class Car(var model: Str,
+               var vin: Str,
                var engineCapacity: Float,
                var enginePower: Int,
                var year: Int,
@@ -15,5 +16,4 @@ data class Car(var model: String,
                var createMileage: Int,
                var replaceMileage: Int,
                var tabs: ArrayList<CarTab>,
-               var costs: ArrayList<CarCost>) : Serializable {
-}
+               var costs: ArrayList<CarCost>) : Serializable

@@ -14,7 +14,7 @@
             android:id="@+id/etTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Пробег"
+            android:hint="@string/mileage_title"
             android:inputType="number"/>
     </LinearLayout>
 </LinearLayout>

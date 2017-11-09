@@ -6,15 +6,16 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.provider.MediaStore
-import android.support.v7.widget.LinearLayoutManager
-import android.view.MenuItem
+import android.provider.MediaStore.*
 import android.view.View
 import android.widget.PopupMenu
 import android.widget.Toast
 import com.arellomobile.mvp.MvpAppCompatActivity
 import com.arellomobile.mvp.presenter.InjectPresenter
+import io.almayce.dev.app24awd.Bool
+import io.almayce.dev.app24awd.LLM
 import io.almayce.dev.app24awd.R
+import io.almayce.dev.app24awd.Str
 import io.almayce.dev.app24awd.adapter.DocsRecyclerViewAdpater
 import io.almayce.dev.app24awd.model.docs.DocList
 import io.almayce.dev.app24awd.presenter.DocsPresenter
@@ -31,9 +32,8 @@ class DocsActivity : MvpAppCompatActivity(),
 
     @InjectPresenter
     lateinit var pr: DocsPresenter
-    lateinit var control: DocsActivityControl
-
-    private lateinit var adapter: DocsRecyclerViewAdpater
+    private lateinit var control: DocsActivityControl
+    private lateinit var docsAdapter: DocsRecyclerViewAdpater
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,36 +49,36 @@ class DocsActivity : MvpAppCompatActivity(),
         control = DocsActivityControl(this)
     }
 
-    fun initActionBar() {
-        supportActionBar?.title = "Документы"
-        supportActionBar?.setDisplayHomeAsUpEnabled(true);
-        supportActionBar?.setDisplayShowHomeEnabled(true);
+    private fun initActionBar() = with(supportActionBar!!) {
+        setDisplayHomeAsUpEnabled(true)
+        setDisplayShowHomeEnabled(true)
+        title = "Документы"
     }
 
-    fun initAdapter() {
-        rvDocs.layoutManager = LinearLayoutManager(this)
-        adapter = DocsRecyclerViewAdpater(this, DocList)
-        adapter.setClickListener(this)
-        adapter.setLongClickListener(this)
-        rvDocs.adapter = adapter
+    private fun initAdapter() {
+        docsAdapter = DocsRecyclerViewAdpater(this@DocsActivity, DocList)
+        with(docsAdapter) {
+            setClickListener(this@DocsActivity)
+            setLongClickListener(this@DocsActivity)
+        }
+        with(rvDocs) {
+            layoutManager = LLM(this@DocsActivity)
+            adapter = docsAdapter
+        }
     }
 
-    fun showPopupMenu(context: Context, v: View, position: Int): Boolean {
+    private fun showPopupMenu(context: Context, v: View, position: Int): Bool {
 
         val popupMenu = PopupMenu(context, v)
         popupMenu.inflate(R.menu.popupmenu_param)
-        popupMenu.setOnMenuItemClickListener(object : PopupMenu.OnMenuItemClickListener {
-
-            override fun onMenuItemClick(item: MenuItem): Boolean {
-                when (item.getItemId()) {
-//                    R.id.menu_replace -> replaceTabParamDialog(position)
-                    R.id.menu_edit -> control.editDocDialog(position)
-                    R.id.menu_photo -> getPhoto(position)
-                    R.id.menu_remove -> control.removeDocDialog(position)
-                    else -> return false
-                }
-                return false
+        popupMenu.setOnMenuItemClickListener(PopupMenu.OnMenuItemClickListener { item ->
+            when (item.itemId) {
+                R.id.menu_edit -> control.editDocDialog(position)
+                R.id.menu_photo -> getPhoto(position)
+                R.id.menu_remove -> control.removeDocDialog(position)
+                else -> return@OnMenuItemClickListener false
             }
+            false
         })
         popupMenu.show()
         return true
@@ -87,38 +87,42 @@ class DocsActivity : MvpAppCompatActivity(),
     private val CAMERA_PHOTO = 111
     private var path: Uri? = null
     private var pos = 0
-    fun getPhoto(position: Int) {
-        var intentCapture = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-        var contentValues = ContentValues()
-        contentValues.put(MediaStore.Images.Media.TITLE, "temp")
-        path = getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+
+    private fun getPhoto(position: Int) {
+        val intentCapture = Intent(ACTION_IMAGE_CAPTURE)
+        val contentValues = ContentValues()
+        contentValues.put(Images.Media.TITLE, "temp")
+        path = contentResolver.insert(Images.Media.EXTERNAL_CONTENT_URI,
                 contentValues)
         pos = position
 //        intentCapture.putExtra("position", position)
-        intentCapture.putExtra(MediaStore.EXTRA_OUTPUT,
+        intentCapture.putExtra(EXTRA_OUTPUT,
                 path)
 
-        startActivityForResult(intentCapture, CAMERA_PHOTO);
+        startActivityForResult(intentCapture, CAMERA_PHOTO)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == Activity.RESULT_OK) {
             val currentParam = pr.getCurrentDoc(pos)
-//            val path = intent.getStringExtra("path")
             currentParam.photoPath = path.toString()
-            var projection = arrayOf<String>(MediaStore.Images.Media.DATA);
-            var cursor = getContentResolver().query(path, projection, null, null, null);
-            var index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
-            cursor.moveToFirst()
-            var capturedImageFilePath = cursor.getString(index);
-            cursor.close()
-            pr.serialize()
-            pr.transformBitmap(capturedImageFilePath)
+            val projection = arrayOf(Images.Media.DATA)
+            val cursor = contentResolver.query(path, projection, null, null, null)
+            with(cursor) {
+                val index = getColumnIndexOrThrow(Images.Media.DATA)
+                moveToFirst()
+                val capturedImageFilePath = getString(index)
+                close()
+                with(pr) {
+                    serialize()
+                    transformBitmap(capturedImageFilePath)
+                }
+            }
         }
     }
 
-    fun showToast(text: String) = Toast.makeText(this, text, Toast.LENGTH_SHORT).show()
+    fun showToast(text: Str) = Toast.makeText(this, text, Toast.LENGTH_SHORT).show()
 
     override fun onItemClick(view: View, position: Int) {
         showPopupMenu(this, view, position)
@@ -128,13 +132,10 @@ class DocsActivity : MvpAppCompatActivity(),
         showPopupMenu(this, view, position)
     }
 
-    override fun notifyDataSetChanged() {
-        adapter.notifyDataSetChanged()
-    }
+    override fun notifyDataSetChanged() = docsAdapter.notifyDataSetChanged()
 
-    override fun onSupportNavigateUp(): Boolean {
+    override fun onSupportNavigateUp(): Bool {
         onBackPressed()
         return true
     }
-
 }

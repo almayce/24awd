@@ -13,11 +13,11 @@
         android:id="@+id/ivPhoto"
         android:layout_width="80dp"
         android:layout_height="80dp"
-        android:src="@color/colorAccent"/>
+        android:src="@color/colorAccent"
+        android:contentDescription="@null" />
 
     <LinearLayout
-
-        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+        android:layout_marginStart="@dimen/activity_horizontal_margin"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
@@ -38,7 +38,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="До:" />
+                android:text="@string/doc_to" />
 
             <TextView
                 android:id="@+id/tvReplace"

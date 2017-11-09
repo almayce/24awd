@@ -5,5 +5,4 @@ import java.io.Serializable
 /**
  * Created by almayce on 27.10.17.
  */
-object Markers : ArrayList<LocationMarker>(), Serializable {
-}
+object Markers : ArrayList<LocationMarker>(), Serializable

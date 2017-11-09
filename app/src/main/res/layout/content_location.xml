@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="io.almayce.dev.app24awd.view.AddcarActivity"
+    tools:context="io.almayce.dev.app24awd.view.AddCarActivity"
     tools:showIn="@layout/activity_location"
     android:background="@android:color/white"
     >
@@ -26,7 +26,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:text="Добавить фото"
+        android:text="@string/location_addphoto"
         android:textColor="@android:color/white"/>
 
     <android.support.design.widget.FloatingActionButton
@@ -36,7 +36,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
         android:layout_margin="@dimen/activity_vertical_margin"
-        android:src="@drawable/ic_gps_fixed_white_24dp" />
+        android:src="@drawable/ic_gps_fixed_white_24dp"
+        tools:ignore="RelativeOverlap" />
 </RelativeLayout>

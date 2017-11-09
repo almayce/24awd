@@ -5,7 +5,8 @@
     android:layout_marginBottom="@dimen/space"
     android:background="@android:color/white"
     android:orientation="horizontal"
-    android:padding="@dimen/activity_horizontal_margin">
+    android:padding="@dimen/activity_horizontal_margin"
+    android:baselineAligned="false">
 
     <LinearLayout
         android:layout_weight="1"
@@ -19,7 +20,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="@dimen/text_medium"
-            android:text="TITLE"/>
+            />
 
         <TextView
             android:textColor="@android:color/black"
@@ -27,14 +28,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="@dimen/text_medium"
-            android:text="MILEAGE"/>
+            />
 
         <TextView
             android:id="@+id/tvComment"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="@dimen/text_small"
-            android:text="COMMENT"/>
+            />
 
 
     </LinearLayout>
@@ -49,21 +50,21 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="@dimen/text_medium"
-            android:text="DATE"/>
+            />
 
         <TextView
             android:id="@+id/tvReplace"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="@dimen/text_medium"
-            android:text=""/>
+            />
 
         <TextView
             android:id="@+id/tvPrice"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="@dimen/text_small"
-            android:text="PRICE"/>
+            />
 
     </LinearLayout>
 

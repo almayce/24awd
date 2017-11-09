@@ -3,10 +3,11 @@ package io.almayce.dev.app24awd.global
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Matrix
+import io.almayce.dev.app24awd.FOS
+import io.almayce.dev.app24awd.Str
 import io.reactivex.subjects.PublishSubject
 import java.io.File
 import java.io.FileNotFoundException
-import java.io.FileOutputStream
 import java.io.IOException
 import java.net.HttpURLConnection
 import java.net.URL
@@ -16,24 +17,16 @@ import java.net.URL
  */
 class BitmapManager {
 
-    val onTransformedBitmapObservable = PublishSubject.create<Bitmap>()
+    val onTransformedBitmapObservable: PublishSubject<Bitmap>? = PublishSubject.create<Bitmap>()
 
-    fun transformBitmap(path: String) {
+    fun transformBitmap(path: Str) {
         var preview: Bitmap
         val options = BitmapFactory.Options()
+
         options.inJustDecodeBounds = true
-
-        val imageHeight = options.outHeight
-        val imageWidth = options.outWidth
-        val imageType = options.outMimeType
-
-        BitmapFactory.decodeFile(path, options);
-
-        // Calculate inSampleSize
-        options.inSampleSize = calculateInSampleSize(options, 200, 200);
-
-        // Decode bitmap with inSampleSize set
-        options.inJustDecodeBounds = false;
+        BitmapFactory.decodeFile(path, options)
+        options.inSampleSize = calculateInSampleSize(options, 200, 200)
+        options.inJustDecodeBounds = false
         preview = BitmapFactory.decodeFile(path, options)
 
         var file = File(path)
@@ -42,28 +35,26 @@ class BitmapManager {
             file = File(path)
         }
 
-        val stream = FileOutputStream(file)
+        val stream = FOS(file)
         preview = rotateImage(preview, 90F)
         preview.compress(Bitmap.CompressFormat.JPEG, 80, stream)
         stream.flush()
         stream.close()
-        onTransformedBitmapObservable.onNext(preview)
+        onTransformedBitmapObservable!!.onNext(preview)
     }
 
-    fun getBitmapFromURL(src: String?): Bitmap? {
-        try {
-            val url = URL(src)
-            val connection = url.openConnection() as HttpURLConnection
-            connection.doInput = true
-            connection.connect()
-            val input = connection.inputStream
-            return BitmapFactory.decodeStream(input)
-        } catch (e: IOException) {
-            return null
-        }
+    fun getBitmapFromURL(src: Str?): Bitmap? = try {
+        val url = URL(src)
+        val connection = url.openConnection() as HttpURLConnection
+        connection.doInput = true
+        connection.connect()
+        val input = connection.inputStream
+        BitmapFactory.decodeStream(input)
+    } catch (e: IOException) {
+        null
     }
 
-    fun calculateInSampleSize(
+    private fun calculateInSampleSize(
             options: BitmapFactory.Options, reqWidth: Int, reqHeight: Int): Int {
         // Raw height and width of image
         val height = options.outHeight
@@ -85,7 +76,7 @@ class BitmapManager {
         return inSampleSize
     }
 
-    fun rotateImage(src: Bitmap, degree: Float): Bitmap {
+    private fun rotateImage(src: Bitmap, degree: Float): Bitmap {
         // create new matrix
         val matrix = Matrix()
         // setup rotation degree
@@ -93,11 +84,9 @@ class BitmapManager {
         return Bitmap.createBitmap(src, 0, 0, src.width, src.height, matrix, true)
     }
 
-    fun getBitmapFromPath(path: String): Bitmap {
-         try {
-             return  BitmapFactory.decodeFile(path) }
-         catch (e: IllegalStateException) {
-             throw FileNotFoundException()
-         }
-    }
+    fun getBitmapFromPath(path: Str): Bitmap = try {
+       BitmapFactory.decodeFile(path)
+   } catch (e: IllegalStateException) {
+       throw FileNotFoundException()
+   }
 }

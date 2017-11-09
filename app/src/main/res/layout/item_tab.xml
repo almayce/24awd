@@ -16,7 +16,8 @@
             android:layout_width="60dp"
             android:layout_height="60dp"
             android:layout_centerHorizontal="true"
-            android:src="@drawable/ic_other" />
+            android:src="@drawable/ic_other"
+            android:contentDescription="@null" />
 
         <TextView
             android:id="@+id/tvItem"

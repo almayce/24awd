@@ -12,6 +12,7 @@ import android.support.v4.app.NotificationCompat
 import android.support.v4.content.ContextCompat
 import android.support.v4.content.WakefulBroadcastReceiver
 import io.almayce.dev.app24awd.R
+import io.almayce.dev.app24awd.Str
 
 /**
  * Created by almayce on 25.09.17.
@@ -24,7 +25,7 @@ class Notificator : WakefulBroadcastReceiver() {
         val pm = context.getSystemService(Context.POWER_SERVICE) as PowerManager
         val wl = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "")
 
-        wl.acquire()
+        wl.acquire(20000)
         val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse("http://24awd.com/"))
         browserIntent.addFlags(Intent.FLAG_ACTIVITY_PREVIOUS_IS_TOP)
 
@@ -33,18 +34,20 @@ class Notificator : WakefulBroadcastReceiver() {
                 browserIntent, PendingIntent.FLAG_UPDATE_CURRENT)
 
         val builder = NotificationCompat.Builder(context)
-        if (intent.getBooleanExtra("isTask", false) == false) {
-            builder.setContentTitle("24awd")
-            builder.setContentText("Пожалуйста, введите актуальный пробег своего автомобиля.")
-        } else {
-            builder.setContentTitle(intent.getStringExtra("title"))
-            builder.setContentText(intent.getStringExtra("text"))
-        }
+        with(builder) {
+            if (!intent.getBooleanExtra("isTask", false)) {
+                setContentTitle("24awd")
+                setContentText("Пожалуйста, введите актуальный пробег своего автомобиля.")
+            } else {
+                setContentTitle(intent.getStringExtra("title"))
+                setContentText(intent.getStringExtra("text"))
+            }
 
-        builder.color = ContextCompat.getColor(context, R.color.colorPrimary);
-        builder.setSmallIcon(R.drawable.ic_warning_black_24dp)
-        builder.setDefaults(Notification.DEFAULT_ALL)
-        builder.setContentIntent(pendingIntent)
+            color = ContextCompat.getColor(context, R.color.colorPrimary)
+            setSmallIcon(R.drawable.ic_warning_black_24dp)
+            setDefaults(Notification.DEFAULT_ALL)
+            setContentIntent(pendingIntent)
+        }
 
         val notification = builder.build()
         notification.flags = notification.flags or Notification.FLAG_ONLY_ALERT_ONCE
@@ -62,11 +65,13 @@ class Notificator : WakefulBroadcastReceiver() {
         am.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), pi)
     }
 
-    fun setAlarm(context: Context, millis: Long, title: String, message: String) {
+    fun setAlarm(context: Context, millis: Long, title: Str, message: Str) {
         val i = Intent(context, Notificator::class.java)
-        i.putExtra("title", title)
-        i.putExtra("text", message)
-        i.putExtra("isTask", true)
+        with(i) {
+            putExtra("title", title)
+            putExtra("text", message)
+            putExtra("isTask", true)
+        }
         val pi = PendingIntent.getBroadcast(context, (System.currentTimeMillis()).toInt(), i, 0)
         val am = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
         am.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + millis, pi)

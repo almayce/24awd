@@ -8,31 +8,23 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import android.widget.LinearLayout
-import android.widget.TextView
-import io.almayce.dev.app24awd.R
+import io.almayce.dev.app24awd.*
 import io.almayce.dev.app24awd.model.cars.CarList
 import io.almayce.dev.app24awd.model.cars.CarTabParam
 import io.almayce.dev.app24awd.model.cars.SelectedCar
 import java.io.FileNotFoundException
-import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.TimeUnit
-import kotlin.collections.ArrayList
 
 /**
  * Created by almayce on 22.09.17.
  */
 class ParamRecyclerViewAdpater(val context: Context, var list: ArrayList<CarTabParam>) : RecyclerView.Adapter<ParamRecyclerViewAdpater.ViewHolder>() {
 
-    private val inflater: LayoutInflater
+    private val inflater = LayoutInflater.from(context)
     private var clickListener: ItemClickListener? = null
     private var longClickListener: ItemLongClickListener? = null
-
-    init {
-        this.inflater = LayoutInflater.from(context)
-    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = inflater.inflate(R.layout.item_param, parent, false)
@@ -41,102 +33,80 @@ class ParamRecyclerViewAdpater(val context: Context, var list: ArrayList<CarTabP
 
     // binds the data to the textview in each row
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val target = list.get(position)
-        holder.tvTitle.text = target.title
-        holder.tvLimit.text = "${target.replaceLimit} км."
-        holder.tvCost.text = "${target.replaceCost} руб."
+        val target = list[position]
+        val (title, photoPath, replaceDate, replaceMileage, replaceCost, replaceLimit) = target
+        val (model, vin, engineCapacity, enginePower, year, createDate, carReplaceDate, carCreateMileage, carReplaceMileage, tabs, costs) = CarList[SelectedCar.index]
 
-        if (target.photoPath != "") {
-            try {
-                holder.ivPhoto.setImageURI(Uri.parse(target.photoPath))
-            } catch (e: FileNotFoundException) {
-                e.stackTrace
+        with(holder) {
+            tvTitle.text = title
+            tvLimit.text = "$replaceLimit км."
+            tvCost.text = "$replaceCost руб."
+            tvReplace.text = " - "
+            tvNextMileageReplace.text = " - "
+            tvReplaceDays.text = " - "
+
+            if (photoPath != "")
+                try {
+                    ivPhoto.setImageURI(Uri.parse(photoPath))
+                } catch (e: FileNotFoundException) {
+                    e.printStackTrace()
+                }
+
+            if (replaceMileage > 0) {
+                tvReplace.text = "${dateFormat(replaceDate)} - $replaceMileage км."
+                tvNextMileageReplace.text = "${(replaceMileage + replaceLimit)} км."
             }
-        }
 
+            if (replaceMileage > 0 && carReplaceMileage > 0) {
 
-//        Log.d("firstReplaceDate", target.firstReplaceDate.toString())
-//        Log.d("firstReplaceMileage", target.firstReplaceMileage.toString())
-//        Log.d("lastReplaceDate", target.lastReplaceDate.toString())
-//        Log.d("lastReplaceMileage", target.lastReplaceMileage.toString())
+                val replaceMileage = (replaceMileage + replaceLimit) - carReplaceMileage
+                Log.d("replaceMileage", replaceMileage.toString())
 
-        val car = CarList.get(SelectedCar.index)
+                val deltaDate = carReplaceDate - createDate
+                Log.d("deltaDate", deltaDate.toString())
 
-        holder.tvReplace.text = " - "
-        holder.tvNextMileageReplace.text = " - "
-        holder.tvReplaceDays.text = " - "
+                val deltaMileage = carReplaceMileage - carCreateMileage
+                Log.d("deltaMileage", deltaMileage.toString())
 
-        if (target.replaceMileage > 0) {
-            holder.tvReplace.text =  "${dateFormat(target.replaceDate)} - ${target.replaceMileage} км."
-            holder.tvNextMileageReplace.text = "${(target.replaceMileage + target.replaceLimit)} км."
-        }
+                var deltaDays = TimeUnit.DAYS.convert(deltaDate, TimeUnit.MILLISECONDS)
+                Log.d("deltaDays", deltaDays.toString())
 
-        if (target.replaceMileage >0 && car.replaceMileage >0) {
+                if (deltaDays < 1) deltaDays = 1
+                var avgPerDay = deltaMileage / deltaDays
+                if (avgPerDay < 1) avgPerDay = 1
+                val daysLeft = replaceMileage / avgPerDay
+                Log.d("daysLeft", daysLeft.toString())
 
-            val replaceMileage = (target.replaceMileage + target.replaceLimit) - car.replaceMileage
-            Log.d("replaceMileage", replaceMileage.toString())
+                val replaceDate = System.currentTimeMillis() + TimeUnit.MILLISECONDS.convert(daysLeft, TimeUnit.DAYS)
+                val nextReplaceDate = dateFormat(replaceDate)
 
-            val deltaDate = car.replaceDate - car.createDate
-            Log.d("deltaDate", deltaDate.toString())
+                llNextReplace.setBackgroundColor(ContextCompat.getColor(context, R.color.colorAccentTrans))
+                tvNextReplace.text = "Замена через:"
+                tvReplaceDays.text = "$replaceMileage км.\n" +
+                                "$daysLeft дн.\n" +
+                                "($nextReplaceDate)"
 
-            val deltaMileage = car.replaceMileage - car.createMileage
-            Log.d("deltaMileage", deltaMileage.toString())
+                val deltaMillis = Math.abs(System.currentTimeMillis() - replaceDate)
+                val dayInMillis = TimeUnit.MILLISECONDS.convert(1, TimeUnit.DAYS)
+                if (deltaMillis < dayInMillis || daysLeft <= 0)
+                    tvReplaceDays.text = "$replaceMileage км."
 
-            var deltaDays = TimeUnit.DAYS.convert(deltaDate, TimeUnit.MILLISECONDS)
-            Log.d("deltaDays", deltaDays.toString())
-
-            if (deltaDays < 1) deltaDays = 1
-            var avgPerDay = deltaMileage / deltaDays
-            if (avgPerDay < 1) avgPerDay = 1
-            val daysLeft = replaceMileage / avgPerDay
-            Log.d("daysLeft", daysLeft.toString())
-
-            val replaceDate = System.currentTimeMillis() + TimeUnit.MILLISECONDS.convert(daysLeft, TimeUnit.DAYS)
-            val nextReplaceDate = dateFormat(replaceDate)
-
-
-            holder.llNextReplace.setBackgroundColor(ContextCompat.getColor(context, R.color.colorAccentTrans))
-            holder.tvNextReplace.text = "Замена через:"
-            holder.tvReplaceDays.text =
-                    "${replaceMileage} км.\n" +
-                            "${daysLeft} дн.\n" +
-                            "(${nextReplaceDate})"
-
-            if (Math.abs(System.currentTimeMillis() - replaceDate) < TimeUnit.MILLISECONDS.convert(1, TimeUnit.DAYS)
-                    || daysLeft <= 0) {
-                holder.tvReplaceDays.text =
-                        "${replaceMileage} км."}
-
-            if (replaceMileage < 500){
-                holder.llNextReplace.setBackgroundColor(ContextCompat.getColor(context, R.color.colorAccentSecondTrans))
-                holder.tvNextReplace.text = "Произведите замену"
-                holder.tvReplaceDays.text = "!!!"
+                if (replaceMileage < 500) {
+                    llNextReplace.setBackgroundColor(ContextCompat.getColor(context, R.color.colorAccentSecondTrans))
+                    tvNextReplace.text = "Произведите замену"
+                    tvReplaceDays.text = "!!!"
+                }
             }
         }
     }
-
-//    fun avgPerDay(dateList: ArrayList<Long>, mileageList: ArrayList<Int>): Long {
-//        val deltaDate = dateList.last() - dateList.get(1)
-//        val deltaMileage = mileageList.last() - dateList.get(1)
-//        val deltaDays = TimeUnit.DAYS.convert(deltaDate, TimeUnit.MILLISECONDS)
-//        return (deltaMileage / deltaDays)
-//    }
-
-//    fun calculateReplaceDaysLeft(limit: Int, date: Long): Int {
-//        val totalDays = limit / CarList.get(SelectedCar.index).dayMileage
-//        val totalMillis = TimeUnit.MILLISECONDS.convert(totalDays.toLong(), TimeUnit.DAYS);
-//        val currentMillis = System.currentTimeMillis()
-//        val millis = totalMillis - (currentMillis - date)
-//        return TimeUnit.DAYS.convert(millis, TimeUnit.MILLISECONDS).toInt()
-//    }
 
     override fun onViewDetachedFromWindow(holder: ViewHolder) {
         super.onViewDetachedFromWindow(holder)
         holder.itemView.clearAnimation()
     }
 
-    fun dateFormat(replaceDate: Long): String {
-        val sdf = SimpleDateFormat("dd / MM / yy", Locale.ROOT)
+    private fun dateFormat(replaceDate: Long): Str {
+        val sdf = SDF("dd / MM / yy", Locale.ROOT)
         sdf.timeZone = TimeZone.getTimeZone("UTC")
         return sdf.format(replaceDate)
     }
@@ -145,26 +115,17 @@ class ParamRecyclerViewAdpater(val context: Context, var list: ArrayList<CarTabP
 
     // stores and recycles views as they are scrolled off screen
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), View.OnClickListener, View.OnLongClickListener {
-        var tvTitle: TextView
-        var ivPhoto: ImageView
-        var tvReplace: TextView
-        var tvNextReplace: TextView
-        var llNextReplace: LinearLayout
-        var tvCost: TextView
-        var tvLimit: TextView
-        var tvReplaceDays: TextView
-        var tvNextMileageReplace: TextView
+        val tvTitle: TV = itemView.findViewById(R.id.tvTitle)
+        val ivPhoto: IV = itemView.findViewById(R.id.ivPhoto)
+        val tvReplace: TV = itemView.findViewById(R.id.tvReplace)
+        val tvNextReplace: TV = itemView.findViewById(R.id.tvNextReplace)
+        val llNextReplace: LinearLayout = itemView.findViewById(R.id.llNextReplace)
+        val tvCost: TV = itemView.findViewById(R.id.tvCost)
+        val tvLimit: TV = itemView.findViewById(R.id.tvLimit)
+        val tvReplaceDays: TV = itemView.findViewById(R.id.tvReplaceDays)
+        val tvNextMileageReplace: TV = itemView.findViewById(R.id.tvNextMilleageReplace)
 
         init {
-            tvTitle = itemView.findViewById<TextView>(R.id.tvTitle)
-            ivPhoto = itemView.findViewById<ImageView>(R.id.ivPhoto)
-            tvReplace = itemView.findViewById<TextView>(R.id.tvReplace)
-            tvNextReplace = itemView.findViewById<TextView>(R.id.tvNextReplace)
-            llNextReplace = itemView.findViewById<LinearLayout>(R.id.llNextReplace)
-            tvCost = itemView.findViewById<TextView>(R.id.tvCost)
-            tvLimit = itemView.findViewById<TextView>(R.id.tvLimit)
-            tvReplaceDays = itemView.findViewById<TextView>(R.id.tvReplaceDays)
-            tvNextMileageReplace = itemView.findViewById<TextView>(R.id.tvNextMilleageReplace)
             itemView.setOnClickListener(this)
             itemView.setOnLongClickListener(this)
         }
@@ -173,7 +134,7 @@ class ParamRecyclerViewAdpater(val context: Context, var list: ArrayList<CarTabP
             if (clickListener != null) clickListener!!.onItemClick(view, adapterPosition)
         }
 
-        override fun onLongClick(view: View): Boolean {
+        override fun onLongClick(view: View): Bool {
             view.contentDescription = tvTitle.text.toString()
             if (longClickListener != null) longClickListener!!.onItemLongClick(view, adapterPosition)
             return true
@@ -181,7 +142,7 @@ class ParamRecyclerViewAdpater(val context: Context, var list: ArrayList<CarTabP
     }
 
     // convenience method for getting data at click position
-    fun getItem(id: Int): String? = null
+    fun getItem(id: Int): Str? = null
 
     // allows clicks events to be caught
     fun setClickListener(itemClickListener: ItemClickListener) {

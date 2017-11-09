@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -15,7 +15,7 @@
 
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Стоимость замены (руб.)"/>
+        android:hint="@string/replaceparam_price"/>
 
     <TextView
         android:layout_marginTop="@dimen/activity_vertical_margin"
@@ -23,7 +23,7 @@
         android:textAlignment="center"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Дата последней замены:"
+        android:text="@string/raplaceparam_date"
         android:textColor="@android:color/white"
         android:background="@color/colorPrimary"/>
 
@@ -32,5 +32,6 @@
       android:calendarViewShown="false"
       android:id="@+id/dpReplace"
       android:layout_width="match_parent"
-      android:layout_height="wrap_content"/>
+      android:layout_height="wrap_content"
+      tools:targetApi="lollipop" />
 </LinearLayout>

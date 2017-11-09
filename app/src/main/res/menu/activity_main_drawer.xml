@@ -4,39 +4,39 @@
         <item
             android:id="@+id/nav_costs"
             android:icon="@drawable/ic_attach_money_black_24dp"
-            android:title="Расходы" />
+            android:title="@string/nav_costs" />
         <item
             android:id="@+id/nav_buy"
             android:icon="@drawable/ic_shopping_cart_black_24dp"
-            android:title="Купить запчасти" />
+            android:title="@string/nav_buy" />
         <item
             android:id="@+id/nav_doc"
             android:icon="@drawable/ic_payment_black_24dp"
-            android:title="Документы" />
+            android:title="@string/nav_doc" />
     </group>
 
-    <item android:title="Помощь на дороге">
+    <item android:title="@string/nav_help">
         <menu>
 
             <item
                 android:id="@+id/nav_location"
                 android:icon="@drawable/ic_my_location_black_24dp"
-                android:title="Локация" />
+                android:title="@string/nav_lacation" />
 
             <item
                 android:id="@+id/nav_coordinates"
                 android:icon="@drawable/ic_add_location_black_24dp"
-                android:title="Мои координаты" />
+                android:title="@string/nav_coordinates" />
 
             <item
                 android:id="@+id/nav_sos"
                 android:icon="@drawable/ic_warning_black_24dp"
-                android:title="SOS" />
+                android:title="@string/nav_sos" />
 
             <item
                 android:id="@+id/nav_instruction"
                 android:icon="@drawable/ic_traffic_black_24dp"
-                android:title="ДТП" />
+                android:title="@string/nav_instruction" />
 
         </menu>
     </item>

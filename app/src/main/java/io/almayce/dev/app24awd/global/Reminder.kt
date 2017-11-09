@@ -7,6 +7,7 @@ import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.delay
 import kotlinx.coroutines.experimental.launch
 import java.util.*
+import java.util.Calendar.*
 import java.util.concurrent.TimeUnit
 
 /**
@@ -14,7 +15,7 @@ import java.util.concurrent.TimeUnit
  */
 class Reminder : Service() {
 
-    val notificator = Notificator()
+    private val notificator = Notificator()
 
     override fun onBind(p0: Intent?): IBinder? = null
 
@@ -26,12 +27,15 @@ class Reminder : Service() {
         }
     }
 
-    tailrec suspend fun checkCurrentDay() {
+    private tailrec suspend fun checkCurrentDay() {
         delay(3, TimeUnit.HOURS)
-        val calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"))
-        if (calendar.get(Calendar.DAY_OF_WEEK) == Calendar.WEDNESDAY)
-            if (calendar.get(Calendar.HOUR_OF_DAY) > 10)
-                notificator.startAlarm(this@Reminder)
+        val calendar = getInstance(TimeZone.getTimeZone("UTC"))
+        with(calendar) {
+            if (get(DAY_OF_WEEK) == WEDNESDAY)
+                if (get(HOUR_OF_DAY) > 10)
+                    notificator.startAlarm(this@Reminder)
+        }
+
         checkCurrentDay()
     }
 }

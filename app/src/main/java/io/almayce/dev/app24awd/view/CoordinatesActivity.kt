@@ -1,7 +1,9 @@
 package io.almayce.dev.app24awd.view
 
+import android.annotation.SuppressLint
 import android.content.ContentValues
 import android.content.Intent
+import android.content.Intent.*
 import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
@@ -9,7 +11,9 @@ import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
 import com.arellomobile.mvp.MvpAppCompatActivity
+import io.almayce.dev.app24awd.Bool
 import io.almayce.dev.app24awd.R
+import io.almayce.dev.app24awd.Str
 import kotlinx.android.synthetic.main.app_bar_coordinates.*
 import kotlinx.android.synthetic.main.content_coordinates.*
 
@@ -18,8 +22,8 @@ import kotlinx.android.synthetic.main.content_coordinates.*
  */
 class CoordinatesActivity : MvpAppCompatActivity(), LocationListener {
 
-    var locationManager: LocationManager? = null
-    var location: Location? = null
+    private lateinit var locationManager: LocationManager
+    private var location: Location? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,11 +34,14 @@ class CoordinatesActivity : MvpAppCompatActivity(), LocationListener {
         initLocation()
     }
 
+    @SuppressLint("MissingPermission")
     private fun initLocation() {
         locationManager = getSystemService(MvpAppCompatActivity.LOCATION_SERVICE) as LocationManager
-        locationManager!!.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 1f, this)
-        locationManager!!.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 5000, 1f, this)
-        location = locationManager!!.getLastKnownLocation(LocationManager.GPS_PROVIDER)
+        with(locationManager) {
+            requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 1f, this@CoordinatesActivity)
+            requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 5000, 1f, this@CoordinatesActivity)
+            location = getLastKnownLocation(LocationManager.GPS_PROVIDER)
+        }
     }
 
     private fun initUI() {
@@ -46,13 +53,13 @@ class CoordinatesActivity : MvpAppCompatActivity(), LocationListener {
         })
     }
 
-    fun initActionBar() {
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        supportActionBar?.setDisplayShowHomeEnabled(true)
-        supportActionBar?.title = "Мои координаты"
+    private fun initActionBar() = with(supportActionBar!!) {
+        setDisplayHomeAsUpEnabled(true)
+        setDisplayShowHomeEnabled(true)
+        title = "Мои координаты"
     }
 
-    override fun onSupportNavigateUp(): Boolean {
+    override fun onSupportNavigateUp(): Bool {
         onBackPressed()
         return true
     }
@@ -60,16 +67,16 @@ class CoordinatesActivity : MvpAppCompatActivity(), LocationListener {
     private val CAMERA_PHOTO = 111
     private var path: Uri? = null
 
-    fun getPhoto() {
-        var intentCapture = Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        var contentValues = ContentValues()
+    private fun getPhoto() {
+        val intentCapture = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+        val contentValues = ContentValues()
         contentValues.put(MediaStore.Images.Media.TITLE, "temp")
-        path = getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+        path = contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
                 contentValues)
         intentCapture.putExtra(MediaStore.EXTRA_OUTPUT,
                 path)
 
-        startActivityForResult(intentCapture, CAMERA_PHOTO);
+        startActivityForResult(intentCapture, CAMERA_PHOTO)
     }
 
 //    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -85,31 +92,25 @@ class CoordinatesActivity : MvpAppCompatActivity(), LocationListener {
 //        }
 //    }
 
-    fun send(withPhoto: Boolean) {
+    private fun send(withPhoto: Bool) {
         val subject = "Мои координаты"
         val text = "${location?.latitude} " +
                 "\n${location?.longitude}" +
                 "\n\nhttp://maps.google.com/maps?q=+${location?.latitude},+${location?.longitude}" +
-                "\n\n${etMessage.text.toString()}"
+                "\n\n${etMessage.text}"
 
-        val emailIntent = Intent(Intent.ACTION_SEND)
-        emailIntent.type = "application/image"
-        emailIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, subject)
-        emailIntent.putExtra(android.content.Intent.EXTRA_TEXT, text)
-        if (withPhoto) emailIntent.putExtra(Intent.EXTRA_STREAM, path)
-        startActivity(Intent.createChooser(emailIntent, "Send via:"))
+        val emailIntent = Intent(ACTION_SEND)
+        with(emailIntent) {
+            type = "application/image"
+            putExtra(EXTRA_SUBJECT, subject)
+            putExtra(EXTRA_TEXT, text)
+            if (withPhoto) putExtra(EXTRA_STREAM, path)
+        }
+        startActivity(createChooser(emailIntent, "Send via:"))
     }
 
-    override fun onLocationChanged(loc: Location?) {
-        location = loc
-    }
-
-    override fun onStatusChanged(p0: String?, p1: Int, p2: Bundle?) {
-    }
-
-    override fun onProviderEnabled(p0: String?) {
-    }
-
-    override fun onProviderDisabled(p0: String?) {
-    }
+    override fun onLocationChanged(loc: Location?) = let { location = loc }
+    override fun onStatusChanged(p0: Str?, p1: Int, p2: Bundle?) = Unit
+    override fun onProviderEnabled(p0: Str?) = Unit
+    override fun onProviderDisabled(p0: Str?) = Unit
 }

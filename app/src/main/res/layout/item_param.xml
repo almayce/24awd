@@ -13,11 +13,12 @@
         android:id="@+id/ivPhoto"
         android:layout_width="80dp"
         android:layout_height="80dp"
-        android:src="@color/colorAccent"/>
+        android:src="@color/colorAccent"
+        android:contentDescription="@null" />
 
     <LinearLayout
 
-        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+        android:layout_marginStart="@dimen/activity_horizontal_margin"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
@@ -38,7 +39,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Дата замены:" />
+                android:text="@string/param_replacedate" />
 
             <TextView
                 android:id="@+id/tvReplace"
@@ -46,7 +47,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1.4"
                 android:textColor="@android:color/black"
-                android:text="0" />
+                android:text="@string/param_zero" />
 
         </LinearLayout>
 
@@ -59,7 +60,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Лимит замены:"
+                android:text="@string/param_replacelimit"
                 />
 
             <TextView
@@ -68,7 +69,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1.4"
                 android:textColor="@android:color/black"
-                android:text="0" />
+                android:text="@string/param_zero" />
 
         </LinearLayout>
 
@@ -81,7 +82,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Следующая замена:"
+                android:text="@string/param_nextreplace"
                 />
 
             <TextView
@@ -90,7 +91,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1.4"
                 android:textColor="@android:color/black"
-                android:text="0" />
+                android:text="@string/param_zero" />
 
         </LinearLayout>
 
@@ -108,7 +109,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                    android:text="Замена через:"
+                    android:text="@string/param_nextreplace2"
                 />
 
             <TextView
@@ -117,7 +118,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1.4"
                 android:textColor="@android:color/black"
-                android:text="0" />
+                android:text="@string/param_zero" />
 
         </LinearLayout>
 
@@ -130,7 +131,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Стоимость замены:" />
+                android:text="@string/param_replaceprice" />
 
             <TextView
                 android:id="@+id/tvCost"
@@ -138,7 +139,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1.4"
                 android:textColor="@android:color/black"
-                android:text="0" />
+                android:text="@string/param_zero" />
 
         </LinearLayout>
 

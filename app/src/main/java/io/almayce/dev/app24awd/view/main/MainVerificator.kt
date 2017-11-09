@@ -5,6 +5,8 @@ import android.app.Activity
 import android.content.pm.PackageManager
 import android.os.Build
 import android.support.v4.app.ActivityCompat
+import io.almayce.dev.app24awd.Bool
+import io.almayce.dev.app24awd.Str
 
 /**
  * Created by almayce on 27.09.17.
@@ -15,18 +17,18 @@ class MainVerificator(val activity: Activity) {
 
 
 
-    fun hasPermission(permission: String): Boolean {
+    fun hasPermission(permission: Str): Bool {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) return true // must be granted after installed.
         return activity.checkSelfPermission(permission) == PackageManager.PERMISSION_GRANTED
     }
 
-    fun hasLocationPermission(): Boolean {
+    fun hasLocationPermission(): Bool {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) return true // must be granted after installed.
         return activity.checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
     }
 
 
-    fun verifyStoragePermissions(): Boolean {
+    fun verifyStoragePermissions(): Bool {
         // Check if we have write permission
         val permission = ActivityCompat.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE)
 
@@ -44,7 +46,7 @@ class MainVerificator(val activity: Activity) {
     private val REQUEST_ACCESS_LOCATION = 2
     private val PERMISSIONS_LOCATION = arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION)
 
-    fun verifyLocationPermissions(): Boolean {
+    fun verifyLocationPermissions(): Bool {
         // Check if we have write permission
         val permission = ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_FINE_LOCATION)
 

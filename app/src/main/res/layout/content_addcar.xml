@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="io.almayce.dev.app24awd.view.AddcarActivity"
+    tools:context="io.almayce.dev.app24awd.view.AddCarActivity"
     tools:showIn="@layout/activity_main"
     android:background="@android:color/white"
     >
@@ -32,7 +32,7 @@
                         android:id="@+id/etModel"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="Модель и марка"
+                        android:hint="@string/addcar_model"
                         android:imeOptions="actionDone"
                         android:inputType="text"
                         android:maxLines="1" />
@@ -49,7 +49,7 @@
                     android:id="@+id/etVin"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="VIN - номер"
+                    android:hint="@string/addcar_vin"
                     android:imeOptions="actionDone"
                     android:inputType="text"
                     android:maxLines="1" />
@@ -66,7 +66,7 @@
                     android:id="@+id/etCapacity"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Объем двигателя"
+                    android:hint="@string/addcar_capacity"
                     android:imeOptions="actionDone"
                     android:inputType="numberDecimal"
                     android:maxLines="1" />
@@ -83,7 +83,7 @@
                     android:id="@+id/etPower"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Мощность (л.с.)"
+                    android:hint="@string/addcar_power"
                     android:imeOptions="actionDone"
                     android:inputType="number"
                     android:maxLines="1" />
@@ -100,7 +100,7 @@
                     android:id="@+id/etYear"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Год выпуска"
+                    android:hint="@string/addcar_year"
                     android:imeOptions="actionDone"
                     android:inputType="number"
                     android:maxLines="1" />
@@ -117,7 +117,7 @@
                     android:id="@+id/etTotalMileage"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Общий пробег (км.)"
+                    android:hint="@string/addcar_mileage"
                     android:imeOptions="actionDone"
                     android:inputType="number"
                     android:maxLines="1" />
@@ -135,7 +135,7 @@
                     android:id="@+id/etDayMileage"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Средний пробег за день (км.)"
+                    android:hint="@string/addcar_mileageperday"
                     android:imeOptions="actionDone"
                     android:inputType="number"
                     android:maxLines="1" />
@@ -150,7 +150,6 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
         android:layout_margin="@dimen/activity_vertical_margin"
         android:src="@drawable/ic_check_white_24dp" />
 </RelativeLayout>

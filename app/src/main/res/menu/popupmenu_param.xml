@@ -4,15 +4,15 @@
     <group android:id="@+id/menugroup1" >
         <item
             android:id="@+id/menu_edit"
-            android:title="Редактировать"/>
+            android:title="@string/popupmenuparam_edit"/>
         <item
             android:id="@+id/menu_photo"
-            android:title="Добавить фото"/>
+            android:title="@string/popupmenuparam_photo"/>
         <item
             android:id="@+id/menu_remind"
-            android:title="Напомнить"/>
+            android:title="@string/popupmenuparam_remind"/>
         <item
             android:id="@+id/menu_remove"
-            android:title="Удалить"/>
+            android:title="@string/popupmenuparam_remove"/>
     </group>
 </menu>

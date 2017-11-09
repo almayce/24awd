@@ -1,6 +1,6 @@
 package io.almayce.dev.app24awd.model.docs
 
-import java.util.ArrayList
+import java.util.*
 
 /**
  * Created by almayce on 25.09.17.

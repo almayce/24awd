@@ -2,6 +2,7 @@ package io.almayce.dev.app24awd.presenter
 
 import com.arellomobile.mvp.InjectViewState
 import com.arellomobile.mvp.MvpPresenter
+import io.almayce.dev.app24awd.Str
 import io.almayce.dev.app24awd.global.BitmapManager
 import io.almayce.dev.app24awd.global.SchedulersTransformer
 import io.almayce.dev.app24awd.global.Serializer
@@ -15,12 +16,12 @@ import io.almayce.dev.app24awd.view.docs.DocsView
 @InjectViewState
 class DocsPresenter : MvpPresenter<DocsView>() {
 
-    var bm = BitmapManager()
+    private var bm = BitmapManager()
 
     init {
         bm.onTransformedBitmapObservable
-                .compose(SchedulersTransformer())
-                .subscribe({ it ->
+                ?.compose(SchedulersTransformer())
+                ?.subscribe({ it ->
                     viewState.notifyDataSetChanged()
                 })
     }
@@ -32,7 +33,7 @@ class DocsPresenter : MvpPresenter<DocsView>() {
     }
 
     fun editDoc(position: Int, doc: Doc) {
-        DocList.set(position, doc)
+        DocList[position] = doc
         serialize()
         viewState.notifyDataSetChanged()
     }
@@ -43,14 +44,7 @@ class DocsPresenter : MvpPresenter<DocsView>() {
         viewState.notifyDataSetChanged()
     }
 
-    fun getCurrentDoc(position: Int): Doc =
-            DocList.get(position)
-
-    fun serialize() {
-        Serializer.serialize(Serializer.FileName.DOCS)
-    }
-
-    fun transformBitmap(path: String) {
-        bm.transformBitmap(path)
-    }
+    fun getCurrentDoc(position: Int): Doc = DocList[position]
+    fun serialize() = Serializer.serialize(Serializer.FileName.DOCS)
+    fun transformBitmap(path: Str) = bm.transformBitmap(path)
 }

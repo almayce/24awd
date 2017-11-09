@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
@@ -16,7 +16,7 @@
             android:id="@+id/actvParam"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Наименование"
+            android:hint="@string/addcost_name"
             android:imeOptions="actionDone"
             android:inputType="text"
             android:maxLines="1"
@@ -35,7 +35,7 @@
             android:id="@+id/etPrice"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Стоимость (руб.)"
+            android:hint="@string/addcost_price"
             android:imeOptions="actionDone"
             android:inputType="number"
             android:maxLines="1"
@@ -53,7 +53,7 @@
             android:id="@+id/etComment"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Комментарий"
+            android:hint="@string/addcost_comment"
             android:imeOptions="actionDone"
             android:inputType="text"
             android:maxLines="1"
@@ -65,7 +65,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/activity_vertical_margin"
         android:background="@color/colorPrimary"
-        android:text="Дата:"
+        android:text="@string/addcost_date"
         android:textAlignment="center"
         android:textColor="@android:color/white"
         android:textSize="@dimen/text_medium" />
@@ -75,5 +75,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:calendarViewShown="false"
-        android:datePickerMode="spinner" />
+        android:datePickerMode="spinner"
+        tools:targetApi="lollipop" />
 </LinearLayout>

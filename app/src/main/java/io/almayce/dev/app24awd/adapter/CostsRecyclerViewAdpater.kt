@@ -5,10 +5,8 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
-import io.almayce.dev.app24awd.R
+import io.almayce.dev.app24awd.*
 import io.almayce.dev.app24awd.model.cars.CarCost
-import java.text.SimpleDateFormat
 import java.util.*
 
 /**
@@ -16,46 +14,29 @@ import java.util.*
  */
 class CostsRecyclerViewAdpater(val context: Context, var list: ArrayList<CarCost>) : RecyclerView.Adapter<CostsRecyclerViewAdpater.ViewHolder>() {
 
-    private val inflater: LayoutInflater
+    private val inflater: LayoutInflater = LayoutInflater.from(context)
     private var clickListener: ItemClickListener? = null
     private var longClickListener: ItemLongClickListener? = null
-
-    init {
-        this.inflater = LayoutInflater.from(context)
-    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = inflater.inflate(R.layout.item_costs, parent, false)
         return ViewHolder(view)
     }
 
-    // binds the data to the textview in each row
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val target = list.get(position)
-        holder.tvTitle.text = target.title
-        holder.tvMileage.text = "${target.mileage} км."
-        holder.tvComment.text = target.comment
-        holder.tvDate.text = dateFormat(target.date)
-
-//        val replaceMileage = (target.mileage + target.limit) - CarList.get(SelectedCar.index).replaceMileage
-//        val replaceDays = replaceMileage / CarList.get(SelectedCar.index).dayMileage
-
-//        if (target.limit > 0)
-//            holder.tvReplace.text = "Замена через ${replaceDays} дн. (${target.mileage + target.limit} км.)"
-//        else holder.tvReplace.text = ""
-        holder.tvPrice.text = "Цена ${target.price} руб."
+        val target = list[position]
+        val (title, mileage, date, limit, price , comment) = target
+        with(holder) {
+            tvTitle.text = title
+            tvMileage.text = "$mileage км."
+            tvComment.text = comment
+            tvDate.text = dateFormat(date)
+            tvPrice.text = "Цена $price руб."
+        }
     }
 
-//    fun calculateReplaceDaysLeft(limit: Int, date: Long): Int {
-//        val totalDays = (limit / CarList.get(SelectedCar.index).dayMileage)
-//        val totalMillis = TimeUnit.MILLISECONDS.convert(totalDays.toLong(), TimeUnit.DAYS);
-//        val currentMillis = System.currentTimeMillis()
-//        val millis = totalMillis - (currentMillis - date)
-//        return TimeUnit.DAYS.convert(millis, TimeUnit.MILLISECONDS).toInt()
-//    }
-
-    fun dateFormat(replaceDate: Long): String {
-        val sdf = SimpleDateFormat("dd / MM / yy", Locale.ROOT)
+    private fun dateFormat(replaceDate: Long): Str {
+        val sdf = SDF("dd / MM / yy", Locale.ROOT)
         sdf.timeZone = TimeZone.getTimeZone("UTC")
         return sdf.format(replaceDate)
     }
@@ -67,22 +48,14 @@ class CostsRecyclerViewAdpater(val context: Context, var list: ArrayList<CarCost
 
     override fun getItemCount(): Int = list.size
 
-    // stores and recycles views as they are scrolled off screen
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), View.OnClickListener, View.OnLongClickListener {
-        var tvTitle: TextView
-        var tvMileage: TextView
-        var tvComment: TextView
-        var tvDate: TextView
-//        var tvReplace: TextView
-        var tvPrice: TextView
+        val tvTitle: TV = itemView.findViewById(R.id.tvTitle)
+        val tvMileage: TV = itemView.findViewById(R.id.tvMileage)
+        val tvComment: TV = itemView.findViewById(R.id.tvComment)
+        val tvDate: TV = itemView.findViewById(R.id.tvDate)
+        val tvPrice: TV = itemView.findViewById(R.id.tvPrice)
 
         init {
-            tvTitle = itemView.findViewById<TextView>(R.id.tvTitle)
-            tvMileage = itemView.findViewById<TextView>(R.id.tvMileage)
-            tvComment = itemView.findViewById<TextView>(R.id.tvComment)
-            tvDate = itemView.findViewById<TextView>(R.id.tvDate)
-//            tvReplace = itemView.findViewById<TextView>(R.id.tvReplace)
-            tvPrice = itemView.findViewById<TextView>(R.id.tvPrice)
             itemView.setOnClickListener(this)
             itemView.setOnLongClickListener(this)
         }
@@ -91,7 +64,7 @@ class CostsRecyclerViewAdpater(val context: Context, var list: ArrayList<CarCost
             if (clickListener != null) clickListener!!.onItemClick(view, adapterPosition)
         }
 
-        override fun onLongClick(view: View): Boolean {
+        override fun onLongClick(view: View): Bool {
             view.contentDescription = tvTitle.text.toString()
             if (longClickListener != null) longClickListener!!.onItemLongClick(view, adapterPosition)
             return true
@@ -99,7 +72,7 @@ class CostsRecyclerViewAdpater(val context: Context, var list: ArrayList<CarCost
     }
 
     // convenience method for getting data at click position
-    fun getItem(id: Int): String? = null
+    fun getItem(id: Int): Str? = null
 
     // allows clicks events to be caught
     fun setClickListener(itemClickListener: ItemClickListener) {

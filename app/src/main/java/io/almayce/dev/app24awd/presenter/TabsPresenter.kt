@@ -4,6 +4,8 @@ import android.content.Context
 import android.util.Log
 import com.arellomobile.mvp.InjectViewState
 import com.arellomobile.mvp.MvpPresenter
+import io.almayce.dev.app24awd.SDF
+import io.almayce.dev.app24awd.Str
 import io.almayce.dev.app24awd.global.BitmapManager
 import io.almayce.dev.app24awd.global.Notificator
 import io.almayce.dev.app24awd.global.SchedulersTransformer
@@ -13,7 +15,6 @@ import io.almayce.dev.app24awd.model.cars.CarList
 import io.almayce.dev.app24awd.model.cars.CarTabParam
 import io.almayce.dev.app24awd.model.cars.SelectedCar
 import io.almayce.dev.app24awd.view.tabs.TabsView
-import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.TimeUnit
 
@@ -26,30 +27,31 @@ class TabsPresenter : MvpPresenter<TabsView>() {
     var carIndex = 0
     var tabIndex = 0
 
-    var bm = BitmapManager()
-    var nt = Notificator()
+    private var bm = BitmapManager()
+    private var nt = Notificator()
 
     init {
         bm.onTransformedBitmapObservable
-                .compose(SchedulersTransformer())
-                .subscribe({ it ->
+                ?.compose(SchedulersTransformer())
+                ?.subscribe({ it ->
                     viewState.notifyDataSetChanged()
                 })
     }
 
-    fun getSelectedCarModel() = CarList.get(SelectedCar.index).model
+    fun getSelectedCarModel() = CarList[SelectedCar.index].model
     fun getSelectedCarMileage(): Int =
-            if (CarList.get(SelectedCar.index).replaceMileage > 0)
-                CarList.get(SelectedCar.index).replaceMileage
-            else CarList.get(SelectedCar.index).createMileage
+            with(CarList[SelectedCar.index]) {
+                if (replaceMileage > 0)
+                    replaceMileage
+                else createMileage
+            }
+
 
     fun getCurrentParam(position: Int): CarTabParam =
-            CarList.get(carIndex).tabs.get(tabIndex).params.get(position)
+            CarList[carIndex].tabs[tabIndex].params[position]
 
     fun editTabParam(position: Int, param: CarTabParam) {
-        CarList.get(carIndex).tabs
-                .get(tabIndex).params
-                .set(position, param)
+        CarList[carIndex].tabs[tabIndex].params[position] = param
 
         serialize()
 
@@ -57,8 +59,7 @@ class TabsPresenter : MvpPresenter<TabsView>() {
     }
 
     fun addTabParam(param: CarTabParam) {
-        CarList.get(carIndex).tabs
-                .get(tabIndex).params
+        CarList[carIndex].tabs[tabIndex].params
                 .add(param)
 
         serialize()
@@ -66,30 +67,26 @@ class TabsPresenter : MvpPresenter<TabsView>() {
         viewState.notifyDataSetChanged()
     }
 
-    fun saveTabParams() {
-        serialize()
-    }
+    fun saveTabParams() = serialize()
 
-    fun setAlarm(context: Context, position: Int): String {
-        val param = CarList.get(carIndex).tabs
-                .get(tabIndex).params
-                .get(position)
-        val date = calculateReplaceDate(CarList.get(carIndex), param)
-        val content = "В автомобиле ${CarList.get(carIndex).model} произведите замену ${param.title}"
-        if (date > 0) {
+    fun setAlarm(context: Context, position: Int): Str {
+        val param = CarList[carIndex].tabs[tabIndex].params[position]
+        val date = calculateReplaceDate(CarList[carIndex], param)
+        val content = "В автомобиле ${CarList[carIndex].model} произведите замену ${param.title}"
+        return if (date > 0) {
             nt.setAlarm(context, date, "24awd", content)
-            return "Напоминание на ${dateFormat(date)}."
+            "Напоминание на ${dateFormat(date)}."
         }
-        else return "Для расчета даты напоминания введите актуальный пробег автомобиля."
+        else "Для расчета даты напоминания введите актуальный пробег автомобиля."
     }
 
-    fun dateFormat(replaceDate: Long): String {
-        val sdf = SimpleDateFormat("dd / MM / yy", Locale.ROOT)
+    private fun dateFormat(replaceDate: Long): Str {
+        val sdf = SDF("dd / MM / yy", Locale.ROOT)
         sdf.timeZone = TimeZone.getTimeZone("UTC")
         return sdf.format(replaceDate)
     }
 
-    fun calculateReplaceDate(car: Car, param: CarTabParam): Long {
+    private fun calculateReplaceDate(car: Car, param: CarTabParam): Long {
 
         val replaceMileage = (param.replaceMileage + param.replaceLimit) - car.replaceMileage
         Log.d("replaceMileage", replaceMileage.toString())
@@ -105,31 +102,27 @@ class TabsPresenter : MvpPresenter<TabsView>() {
 
         if (deltaDays < 1) deltaDays = 1
         var avgPerDay = deltaMileage / deltaDays
+
         if (avgPerDay < 1) avgPerDay = 1
         val daysLeft = replaceMileage / avgPerDay
         Log.d("daysLeft", daysLeft.toString())
-        if (avgPerDay <= 1)
-            return -1
-        else {
-            val replaceDate = System.currentTimeMillis() + TimeUnit.MILLISECONDS.convert(daysLeft, TimeUnit.DAYS)
-            return replaceDate
-        }
+
+        return if (avgPerDay <= 1)
+            -1
+        else
+            System.currentTimeMillis() + TimeUnit.MILLISECONDS.convert(daysLeft, TimeUnit.DAYS)
     }
 
-    fun transformBitmap(path: String) {
-        bm.transformBitmap(path)
-    }
+    fun transformBitmap(path: Str) = bm.transformBitmap(path)
 
     fun removeTabParam(position: Int) {
-        CarList.get(carIndex).tabs.get(tabIndex).params.removeAt(position)
+        CarList[carIndex].tabs[tabIndex].params.removeAt(position)
 
         serialize()
 
         viewState.notifyDataSetChanged()
     }
 
-    private fun serialize() {
-        Serializer.serialize(Serializer.FileName.CARS)
-    }
+    private fun serialize() = Serializer.serialize(Serializer.FileName.CARS)
 
 }

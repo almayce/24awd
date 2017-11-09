@@ -3,14 +3,14 @@ package io.almayce.dev.app24awd.presenter
 import android.content.Context
 import com.arellomobile.mvp.InjectViewState
 import com.arellomobile.mvp.MvpPresenter
+import io.almayce.dev.app24awd.Str
+import io.almayce.dev.app24awd.adapter.TabGridViewAdapter
 import io.almayce.dev.app24awd.global.Serializer
 import io.almayce.dev.app24awd.model.cars.CarList
 import io.almayce.dev.app24awd.model.cars.CarTab
-import io.almayce.dev.app24awd.model.cars.CarTabParam
-import io.almayce.dev.app24awd.adapter.TabGridViewAdapter
+import io.almayce.dev.app24awd.model.cars.SelectedCar
 import io.almayce.dev.app24awd.model.docs.DocList
 import io.almayce.dev.app24awd.model.docs.DocsPack
-import io.almayce.dev.app24awd.model.cars.SelectedCar
 import io.almayce.dev.app24awd.view.main.MainView
 import java.io.EOFException
 import java.io.FileNotFoundException
@@ -21,7 +21,6 @@ import java.io.InvalidClassException
  */
 @InjectViewState
 class MainPresenter : MvpPresenter<MainView>() {
-
     fun onCreate() {
         CarList.clear()
         DocList.clear()
@@ -29,20 +28,18 @@ class MainPresenter : MvpPresenter<MainView>() {
         checkDocs()
     }
 
-    fun deserialize() {
-        try {
-            Serializer.deserialize(Serializer.FileName.CARS)
-            Serializer.deserialize(Serializer.FileName.DOCS)
-        } catch (e: FileNotFoundException) {
-            e.printStackTrace()
-        } catch (e: InvalidClassException) {
-            e.printStackTrace()
-        } catch (e: EOFException) {
-            e.printStackTrace()
-        }
+    private fun deserialize() = try {
+        Serializer.deserialize(Serializer.FileName.CARS)
+        Serializer.deserialize(Serializer.FileName.DOCS)
+    } catch (e: FileNotFoundException) {
+        e.printStackTrace()
+    } catch (e: InvalidClassException) {
+        e.printStackTrace()
+    } catch (e: EOFException) {
+        e.printStackTrace()
     }
 
-    fun checkDocs() {
+    private fun checkDocs() {
         if (DocList.isEmpty()) DocList.addAll(DocsPack.getAllDocs())
     }
 
@@ -53,14 +50,13 @@ class MainPresenter : MvpPresenter<MainView>() {
     }
 
     fun getSelectedCarMileage(position: Int): Int =
-            if (CarList.get(position).replaceMileage > 0)
-                CarList.get(position).replaceMileage
-            else CarList.get(position).createMileage
+            if (CarList[position].replaceMileage > 0)
+                CarList[position].replaceMileage
+            else CarList[position].createMileage
 
 
     fun saveSelectedCarMileage(position: Int, mileage: Int) {
-        val car = CarList.get(position)
-
+        val car = CarList[position]
         if (mileage < car.createMileage)
             car.createMileage = mileage
         else {
@@ -71,11 +67,11 @@ class MainPresenter : MvpPresenter<MainView>() {
         viewState.updateTitle()
     }
 
-    fun renameSelectedCar(position: Int, title: String) {
-        var car = CarList.get(position)
+    fun renameSelectedCar(position: Int, title: Str) {
+        val car = CarList[position]
         car.model = title
 
-        CarList.set(position, car)
+        CarList[position] = car
         viewState.selectCar(position)
         viewState.notifyDataSetChanged()
         serialize()
@@ -88,39 +84,37 @@ class MainPresenter : MvpPresenter<MainView>() {
         serialize()
     }
 
-    fun addTab(title: String, icon: Int) {
-        var tab = CarTab(title, icon, arrayListOf<CarTabParam>())
-        CarList.get(SelectedCar.index).tabs.add(tab)
+    fun addTab(title: Str, icon: Int) {
+        val tab = CarTab(title, icon, arrayListOf())
+        CarList[SelectedCar.index].tabs.add(tab)
         viewState.notifyDataSetChanged()
         serialize()
     }
 
-    fun editTab(position: Int, title: String) {
-        var tab = CarList.get(SelectedCar.index).tabs.get(position)
+    fun editTab(position: Int, title: Str) {
+        val tab = CarList[SelectedCar.index].tabs[position]
         tab.title = title
 
-        CarList.get(SelectedCar.index).tabs.set(position, tab)
+        CarList[SelectedCar.index].tabs[position] = tab
         viewState.notifyDataSetChanged()
         serialize()
     }
 
-    fun getTabTitle(position: Int): String = CarList.get(SelectedCar.index).tabs.get(position).title
+    fun getTabTitle(position: Int): Str = CarList[SelectedCar.index].tabs[position].title
     fun removeTab(position: Int) {
-        CarList.get(SelectedCar.index).tabs.removeAt(position)
+        CarList[SelectedCar.index].tabs.removeAt(position)
         viewState.notifyDataSetChanged()
         serialize()
     }
 
     fun getTabGridViewAdapter(context: Context, index: Int): TabGridViewAdapter {
         val list = ArrayList<CarTab>()
-        list.addAll(CarList.get(index).tabs)
-        list.add(list.get(list.size - 1))
+        list.addAll(CarList[index].tabs)
+        list.add(list[list.size - 1])
         return TabGridViewAdapter(context, list)
     }
 
-    fun getSelectedCarModel(index: Int) = CarList.get(index).model
+    fun getSelectedCarModel(index: Int) = CarList[index].model
 
-    private fun serialize() {
-        Serializer.serialize(Serializer.FileName.CARS)
-    }
+    private fun serialize() = Serializer.serialize(Serializer.FileName.CARS)
 }

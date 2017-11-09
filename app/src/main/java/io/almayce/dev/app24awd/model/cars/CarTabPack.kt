@@ -9,8 +9,8 @@ import java.util.*
 object CarTabPack {
 
     fun getAllTabs(): ArrayList<CarTab> {
-        var tabs = ArrayList<CarTab>()
-        var c = System.currentTimeMillis()
+        val tabs = ArrayList<CarTab>()
+        val c = System.currentTimeMillis()
 
         tabs.add(CarTab("Масло", R.drawable.ic_oil,
                 arrayListOf(CarTabParam("Моторное масло", "", c, 0, 0, 10000),

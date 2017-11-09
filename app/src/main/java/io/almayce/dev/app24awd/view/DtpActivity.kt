@@ -2,6 +2,7 @@ package io.almayce.dev.app24awd.view
 
 import android.os.Bundle
 import com.arellomobile.mvp.MvpAppCompatActivity
+import io.almayce.dev.app24awd.Bool
 import io.almayce.dev.app24awd.R
 import kotlinx.android.synthetic.main.app_bar_dtp.*
 
@@ -18,12 +19,12 @@ class DtpActivity : MvpAppCompatActivity() {
             initActionBar()
     }
 
-    fun initActionBar() {
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        supportActionBar?.setDisplayShowHomeEnabled(true)
+    private fun initActionBar() = with(supportActionBar!!) {
+        setDisplayHomeAsUpEnabled(true)
+        setDisplayShowHomeEnabled(true)
     }
 
-    override fun onSupportNavigateUp(): Boolean {
+    override fun onSupportNavigateUp(): Bool {
         onBackPressed()
         return true
     }

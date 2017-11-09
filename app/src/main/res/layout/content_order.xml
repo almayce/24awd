@@ -18,27 +18,27 @@
             android:layout_height="wrap_content">
             <EditText
                 android:id="@+id/etName"
-                android:hint="Пожалуйста, представьтесь"
+                android:hint="@string/order_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
 
             <EditText
                 android:id="@+id/etPhone"
                 android:inputType="phone"
-                android:hint="Номер телефона"
+                android:hint="@string/order_phone"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
 
             <EditText
                 android:id="@+id/etMessage"
                 android:inputType="textMultiLine"
-                android:hint="Сообщение"
+                android:hint="@string/order_message"
                 android:layout_width="match_parent"
                 android:layout_height="100dp" />
 
             <Button
                 android:id="@+id/btAddPhoto"
-                android:text="Добавить фото"
+                android:text="@string/order_addphoto"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
 
@@ -52,7 +52,6 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
         android:layout_margin="@dimen/activity_vertical_margin"
         android:src="@drawable/ic_check_white_24dp" />
 

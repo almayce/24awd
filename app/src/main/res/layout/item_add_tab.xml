@@ -5,7 +5,7 @@
     android:padding="4dp">
 
     <RelativeLayout
-        android:contentDescription="add"
+        android:contentDescription="@string/addtab_add"
         android:layout_width="match_parent"
         android:layout_height="100dp"
         android:layout_centerInParent="true"
@@ -17,7 +17,8 @@
             android:layout_width="60dp"
             android:layout_height="60dp"
             android:layout_centerHorizontal="true"
-            android:src="@drawable/ic_add_black_24dp" />
+            android:src="@drawable/ic_add_black_24dp"
+            android:contentDescription="@null" />
 
         <TextView
             android:id="@+id/tvItem"
@@ -28,7 +29,7 @@
             android:maxLines="2"
             android:textAlignment="center"
             android:textSize="@dimen/text_medium"
-            android:text="Добавить"
+            android:text="@string/addtab_addtitle"
             />
     </RelativeLayout>
 </RelativeLayout>
